@@ -4,7 +4,7 @@
 
 ## **Phase 1 — Foundations & Architecture**
 
-**Timeline:** 27.11.2025
+**Timeline:** 27.11.2025 \
 **Milestone:** M1 — System Definition & Connectivity
 
 ### ✅ System Planning
@@ -31,7 +31,7 @@
 
 ## **Phase 2 — Core Functionality Implementation**
 
-**Timeline:** 28.11 → 14.12.2025
+**Timeline:** 28.11 → 14.12.2025 \
 **Milestone:** M2 — Functional Prototype
 
 ### ✅ Live Simulation Control
