@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 2025-11-26 04:00:25 by Eclipse SUMO netedit Version 1.24.0
+-->
+
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/routes_file.xsd">
+    <!-- Vehicles, persons and containers (sorted by depart) -->
+    <flow id="f_0" begin="0.00" color="red" from="E19" to="E65" via="E20 E21 E71 E72 E73 E74 E64" end="3600.00" vehsPerHour="500"/>
+    <flow id="f_1" begin="0.00" from="E19" to="E65" via="E20 E27 E0 E1 E2 E3 E4 E72 E73 E74 E64" end="3600.00" vehsPerHour="1200"/>
+    <flow id="f_2" begin="0.00" color="blue" from="-E65" to="-E19" via="-E64 -E74 -E73 -E72 -E71 -E21 -E20" end="3600.00" vehsPerHour="1200"/>
+    <flow id="f_3" begin="0.00" color="cyan" from="-E65" to="E17" via="-E64 -E74 -E73 -E72 -E4 -E3 -E2 -E1 -E0 -E26 -E25 E24 E15 E16" end="3600.00" vehsPerHour="1200"/>
+    <flow id="f_4" begin="0.00" color="10,255,160" from="-E65" to="-E37" via="-E61" end="3600.00" vehsPerHour="800"/>
+    <flow id="f_5" begin="0.00" color="red" from="-E17" to="E65" via="-E16 -E15 -E24 E25 E26 E76 E77 E711 E72 -E41 -E40 -E39 E61" end="3600.00" vehsPerHour="500"/>
+</routes>

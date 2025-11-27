@@ -23,8 +23,8 @@ public class APITest {
 
         String base = System.getProperty("user.dir");
 
-        String configPath = base + "/SumoConfig/altstadt.sumocfg";
-        String routePath  = base + "/SumoConfig/altstadt.rou.xml";
+        String configPath = base + "/Java/src/main/resources/SumoConfig/altstadt.sumocfg";
+        String routePath  = base + "/Java/src/main/resources/SumoConfig/altstadt.rou.xml";
 
 
 
