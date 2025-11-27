@@ -2,14 +2,15 @@ import org.eclipse.sumo.libtraci.*;
 
 import java.util.Scanner;
 
+
 public class APITest {
     public static String openguiYN(){
         Scanner input =new Scanner(System.in);
         System.out.println("Do you want to open the Simulation with the Sumo GUI?[Y/N]");
         String answer = input.nextLine().trim().toLowerCase();
-        boolean opengui = answer.equals("y");
+        boolean open_gui = answer.equals("y");
         String sumo;
-        if(opengui){
+        if(open_gui){
             sumo="sumo-gui.exe";
         }else{
             sumo="sumo.exe";
@@ -35,21 +36,21 @@ public class APITest {
 
 
 
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 1000; i++) {
             Simulation.step();
 
             System.out.println("Step: " + Simulation.getTime());
-            StringVector cars = Vehicle.getIDList();
+            StringVector cars_list = Vehicle.getIDList();
 
-            for (String id : cars) {
+            for (String id : cars_list) {
                 TraCIPosition pos = Vehicle.getPosition(id);
                 System.out.println("  " + id + " at (" + pos.getX() + ", " + pos.getY() + ")");
 
             }}
 
-        StringVector tlights =TrafficLight.getIDList();
+        StringVector trafficlights_list =TrafficLight.getIDList();
 
-            System.out.println("Traffic light id: "+ tlights);
+            System.out.println("Traffic light id: "+ trafficlights_list);
 
 
 

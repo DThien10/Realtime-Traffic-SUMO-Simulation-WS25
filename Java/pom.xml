@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.example</groupId>
-    <artifactId>SumoProject</artifactId>
+    <groupId>org.groupprojectjava.WS25.group4</groupId>
+    <artifactId>Realtime-Traffic-SUMO-Simulation-WS25</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
@@ -14,6 +14,15 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>eclipse-sumo</id>
+            <name>Public Eclipse SUMO Nexus</name>
+            <url>https://repo.eclipse.org/content/repositories/sumo-releases/</url>
+        </repository>
+    </repositories>
+
+
     <dependencies>
 
         <dependency>
@@ -21,6 +30,9 @@
             <artifactId>libtraci</artifactId>
             <version>1.24.0</version>
         </dependency>
+
+
+
     </dependencies>
 
 </project>
