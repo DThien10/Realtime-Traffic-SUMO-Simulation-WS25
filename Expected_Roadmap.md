@@ -88,7 +88,7 @@
 * Export statistics to CSV
 * Generate PDF reports (charts + timestamps)
 
-### ⭐ Logging & Error Handling
+### ✅  Logging & Error Handling
 
 * Integrate `java.util.logging`
 * Add custom exceptions
