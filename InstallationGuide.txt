@@ -1,0 +1,28 @@
+For WINDOWS!:
+
+Requirments:
+        Java JDK:    https://www.oracle.com/java/technologies/downloads/#jdk25-windows for windows
+        Apache Maven:   run in powershell: Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+                        Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
+                   
+                         after installation run: scoop install main/maven
+
+        SUMO         https://sumo.dlr.de/docs/Downloads.php 
+                        on installation add sumo to path
+
+
+Clone the Project:
+                    git clone https://github.com/DThien10/Realtime-Traffic-SUMO-Simulation-WS25.git
+                    cd Realtime-Traffic-SUMO-Simulation-WS25
+
+     in terminal in project folder:   cd .\Java\
+                                    mvn clean install
+
+run:
+    Using IntelliJ: press the green run button
+    Using VSCode: press dropdown next to run button and click Run Java.
+
+
+                
+
+

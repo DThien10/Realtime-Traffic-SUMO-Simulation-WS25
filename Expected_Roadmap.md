@@ -4,8 +4,8 @@
 
 ## **Phase 1 — Foundations & Architecture**
 
-**Timeline:** 27.11.2025
-**Milestone:** M1 — System Definition & Connectivity
+**Timeline:** 27.11.2025 \
+**Milestone:** System Definition & Connectivity
 
 ### ✅ System Planning
 
@@ -31,8 +31,8 @@
 
 ## **Phase 2 — Core Functionality Implementation**
 
-**Timeline:** 28.11 → 14.12.2025
-**Milestone:** M2 — Functional Prototype
+**Timeline:** 28.11 → 14.12.2025 \
+**Milestone:** Functional Prototype
 
 ### ✅ Live Simulation Control
 
@@ -69,13 +69,13 @@
 
 **Timeline:** 15.12 → 10.01.2026
 
-### ⭐ Advanced Visualization & Filtering
+### ✅  Visualization & Filtering
 
 * Filter vehicles by speed range, type, color, or edge
 * Highlight congested areas
 * Improved map rendering (lane outlines, scaled nodes)
 
-### ⭐ Analytics System
+### ✅  Analytics System
 
 * Average speed computation
 * Edge density tracking
@@ -83,12 +83,12 @@
 * Travel time statistics
 * Real-time charts (line + pie charts)
 
-### ⭐ Exporting Tools
+### ✅  Exporting Tools
 
 * Export statistics to CSV
 * Generate PDF reports (charts + timestamps)
 
-### ⭐ Logging & Error Handling
+### ✅  Logging & Error Handling
 
 * Integrate `java.util.logging`
 * Add custom exceptions
