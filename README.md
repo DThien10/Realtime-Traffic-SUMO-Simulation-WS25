@@ -2,9 +2,9 @@
 
 📌 Overview
 
-- This project is a real-time traffic simulation platform built in Java that connects to the SUMO traffic simulator using the TraaS API.
+- This project is a real-time traffic simulation platform built in Java that connects to the SUMO traffic simulator using the Libtraci API.
 - The platform visualizes traffic flow, controls vehicles and traffic lights, and provides live analytics.
-It is developed as part of the Object-Oriented Programming in Java (Winter 2025–2026) module.
+
 
 🎯 Core Features
 ✔ Live SUMO Integration
