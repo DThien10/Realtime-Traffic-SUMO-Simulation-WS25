@@ -1,4 +1,5 @@
 import org.eclipse.sumo.libtraci.*;
+import SimulationWrapper.*;
 
 import java.text.DecimalFormat;
 import java.util.Scanner;
@@ -22,7 +23,7 @@ public class APITest {
         return sumo;
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         //sets up a decimalformat class instance to use later in the output of car coordinates
         DecimalFormat cutoffdecimals = new DecimalFormat("#.00");
         //sets path to sumo files according to user directory
@@ -31,13 +32,28 @@ public class APITest {
         String configPath = base + "/Java/src/main/resources/SumoConfig/altstadt.sumocfg";
         String routePath  = base + "/Java/src/main/resources/SumoConfig/altstadt.rou.xml";
 
+        SumoWrapper testwrapper = new SumoWrapper(configPath);
+        testwrapper.start();
 
+        for (int i = 0; i < 10; i++) {
+            testwrapper.step();
 
+            StringVector cars_list = testwrapper.getVehicleIDs();
+
+            //prints position for every vehicle in the simulation
+
+            for (String id : cars_list) {
+                TraCIPosition pos = Vehicle.getPosition(id);
+                System.out.println("  " + id + " at (" + cutoffdecimals.format(pos.getX())  + ", " + cutoffdecimals.format(pos.getY()) + ")");
+
+            }}
+        testwrapper.quit();
+/*
         Simulation.preloadLibraries();
         //loading up instance of sumo with given variables
         Simulation.start(new StringVector(new String[]{
                 openguiYN(),
-                "-c", configPath,"-r",routePath
+                "-c", configPath,
         }));
 
 
@@ -63,6 +79,7 @@ public class APITest {
 
 
 
-        Simulation.close();
+        Simulation.close(); */
+
     }
 }
