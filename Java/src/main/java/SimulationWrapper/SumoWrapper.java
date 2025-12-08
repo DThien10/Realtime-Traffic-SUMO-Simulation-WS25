@@ -1,7 +1,10 @@
 package SimulationWrapper;
 
 import org.eclipse.sumo.libtraci.*;
+
+import javax.swing.text.Position;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class SumoWrapper {
@@ -16,8 +19,10 @@ public class SumoWrapper {
     }
 
     public void start () throws InterruptedException {
-
         Simulation.preloadLibraries();
+        System.out.println("TraCI native libs loaded");
+
+
     try{
         ProcessBuilder pb = new ProcessBuilder("sumo",
                 "-c", configPath,
@@ -54,13 +59,27 @@ public class SumoWrapper {
         Simulation.step();
     }
 
-    public StringVector getVehicleIDs (){
-        return Vehicle.getIDList();
-    }
-
     public double time(){
         return Simulation.getTime();
     }
+
+    public List<String> getVehicleIDs (){
+        return new ArrayList<>(Vehicle.getIDList());
+    }
+
+    public int get_VehicleCount () {
+        return Vehicle.getIDCount();
+    }
+
+    public Pos get_VehiclePos (String id){
+        TraCIPosition pos = Vehicle.getPosition(id);
+        Pos position = new Pos(pos.getX(), pos.getY());
+        return position;
+
+    }
+
+
+
 
 }
 

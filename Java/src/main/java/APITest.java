@@ -2,6 +2,7 @@ import org.eclipse.sumo.libtraci.*;
 import SimulationWrapper.*;
 
 import java.text.DecimalFormat;
+import java.util.List;
 import java.util.Scanner;
 
 //basic connection showcase of sumo using libtraci
@@ -30,7 +31,7 @@ public class APITest {
         String base = System.getProperty("user.dir");
 
         String configPath = base + "/Java/src/main/resources/SumoConfig/altstadt.sumocfg";
-        String routePath  = base + "/Java/src/main/resources/SumoConfig/altstadt.rou.xml";
+      //not used  String routePath  = base + "/Java/src/main/resources/SumoConfig/altstadt.rou.xml";
 
         SumoWrapper testwrapper = new SumoWrapper(configPath);
         testwrapper.start();
@@ -38,7 +39,7 @@ public class APITest {
         for (int i = 0; i < 10; i++) {
             testwrapper.step();
 
-            StringVector cars_list = testwrapper.getVehicleIDs();
+            List<String> cars_list = testwrapper.getVehicleIDs();
 
             //prints position for every vehicle in the simulation
 
