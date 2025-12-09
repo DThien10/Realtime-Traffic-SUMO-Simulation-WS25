@@ -2,13 +2,13 @@ package SimulationWrapper;
 
 import org.eclipse.sumo.libtraci.*;
 
-import javax.swing.text.Position;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class SumoWrapper {
-
+    private final static Logger WrapperLogger = Logger.getLogger(SumoWrapper.class.getName());
     private Process sumoProcess;
     private final int port=48042;
 
@@ -24,7 +24,7 @@ public class SumoWrapper {
 
 
     try{
-        ProcessBuilder pb = new ProcessBuilder("sumo",
+        ProcessBuilder pb = new ProcessBuilder("sumo-gui",
                 "-c", configPath,
                 "--remote-port", String.valueOf(port)
         );
@@ -52,7 +52,7 @@ public class SumoWrapper {
         if(sumoProcess != null && sumoProcess.isAlive() ){
             sumoProcess.destroy();
         }
-        System.out.println("Sumo process terminated");
+        WrapperLogger.info("Sumo process terminated");
     }
 
     public void step(){
@@ -66,20 +66,60 @@ public class SumoWrapper {
     public List<String> getVehicleIDs (){
         return new ArrayList<>(Vehicle.getIDList());
     }
-
+    public boolean VehicleExists(String CarID){
+        if(Vehicle.getIDList().contains(CarID)){
+            return true;
+        }else{
+            return false;
+        }
+    }
     public int get_VehicleCount () {
         return Vehicle.getIDCount();
     }
 
-    public Pos get_VehiclePos (String id){
+    public Position get_VehiclePos (String id){
         TraCIPosition pos = Vehicle.getPosition(id);
-        Pos position = new Pos(pos.getX(), pos.getY());
-        return position;
+        return new Position(pos.getX(), pos.getY());
 
     }
 
+    public void add_Vehicle(String CarID, String RouteID){
+        Vehicle.add(CarID, RouteID);
+    }
+    public void remove_Vehicle(String CarID){
+        if(VehicleExists(CarID)){
+            Vehicle.remove(CarID);}
+        else WrapperLogger.warning("Vehicle with the ID: "+ CarID+" does not exist");
 
-
+    }
+    //Yet to see if usable or need to implement own color class
+    public TraCIColor get_Vehiclecolor(String id){
+        return Vehicle.getColor(id);
+    }
+    public double get_VehicleSpeed(String CarID) {
+        return Vehicle.getSpeed(CarID);
+    }
+    public void set_VehicleSpeed(String CarID,double speed){
+        Vehicle.setSpeed(CarID,speed);
+    }
+    public int get_TrafficlightPhase(String id){
+        return TrafficLight.getPhase(id);
+    }
+    public String get_TrafficlightColor(String id){
+        return TrafficLight.getRedYellowGreenState(id);
+    }
+    public double get_Trafficlight_phaseduration(String id){
+        return TrafficLight.getPhaseDuration(id);
+    }
+    public double get_Trafficlight_remaining_phaseduration(String id){
+        return TrafficLight.getNextSwitch(id)-Simulation.getTime();
+    }
+    public List<String> get_EdgesIDList(){
+        return new ArrayList<>(Edge.getIDList());
+    }
+    public String get_EdgeStreetname(String id){
+        return Edge.getStreetName(id);
+    }
 
 }
 

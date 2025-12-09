@@ -5,6 +5,8 @@ import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Scanner;
 
+
+
 //basic connection showcase of sumo using libtraci
 public class APITest {
 
@@ -44,10 +46,11 @@ public class APITest {
             //prints position for every vehicle in the simulation
 
             for (String id : cars_list) {
-                TraCIPosition pos = Vehicle.getPosition(id);
+                Position pos = testwrapper.get_VehiclePos(id);
                 System.out.println("  " + id + " at (" + cutoffdecimals.format(pos.getX())  + ", " + cutoffdecimals.format(pos.getY()) + ")");
 
             }}
+
         testwrapper.quit();
 /*
         Simulation.preloadLibraries();
