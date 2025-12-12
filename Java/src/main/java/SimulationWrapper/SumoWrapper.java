@@ -47,6 +47,38 @@ public class SumoWrapper {
         }
 
     }
+
+
+
+    public void start (String routePath,String netPath) throws InterruptedException {
+        Simulation.preloadLibraries();
+        System.out.println("TraCI native libs loaded");
+
+
+        try{
+            ProcessBuilder pb = new ProcessBuilder("sumo-gui",
+                    "-r", routePath,"-n",netPath,
+                    "--remote-port", String.valueOf(port)
+            );
+            pb.inheritIO();
+            sumoProcess= pb.start();}
+        catch (IOException e){
+            System.err.println("Failed to start SUMO: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        IntStringPair connection;
+        for(int i=0; i<10; i++) {
+            try {
+                connection = Simulation.init(port);
+                System.out.println("Connected to : " + connection.getSecond() + " on port: " + port);
+                break;
+            } catch(Exception e) {
+                Thread.sleep(500);
+            }
+        }
+
+    }
     public void quit(){
 
         if(sumoProcess != null && sumoProcess.isAlive() ){
@@ -83,8 +115,15 @@ public class SumoWrapper {
 
     }
 
-    public void add_Vehicle(String CarID, String RouteID){
-        Vehicle.add(CarID, RouteID);
+    public boolean add_Vehicle(String CarID, String RouteID){
+        try{
+            Vehicle.add(CarID, RouteID);
+            return true;
+        } catch (Exception e) {
+            System.err.println("Failed to add vehicle: " + CarID+ " on route"+RouteID+" :"+e.getMessage());
+            return false;
+        }
+
     }
     public void remove_Vehicle(String CarID){
         if(VehicleExists(CarID)){
@@ -119,6 +158,9 @@ public class SumoWrapper {
     }
     public String get_EdgeStreetname(String id){
         return Edge.getStreetName(id);
+    }
+    public List<String> get_RouteIDList(){
+        return new ArrayList<>(Route.getIDList());
     }
 
 }

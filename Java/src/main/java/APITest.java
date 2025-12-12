@@ -29,19 +29,26 @@ public class APITest {
     public static void main(String[] args) throws InterruptedException {
         //sets up a decimalformat class instance to use later in the output of car coordinates
         DecimalFormat cutoffdecimals = new DecimalFormat("#.00");
+
         //sets path to sumo files according to user directory
         String base = System.getProperty("user.dir");
 
         String configPath = base + "/Java/src/main/resources/SumoConfig/altstadt.sumocfg";
-      //not used  String routePath  = base + "/Java/src/main/resources/SumoConfig/altstadt.rou.xml";
-
+        String routePath  = base + "/Java/src/main/resources/SumoConfig/test.rou.xml";
+        String netPath = base + "/Java/src/main/resources/SumoConfig/test.net.xml";
         SumoWrapper testwrapper = new SumoWrapper(configPath);
         testwrapper.start();
 
-        for (int i = 0; i < 10; i++) {
+
+        List<String> route_list = testwrapper.get_RouteIDList();
+        for (int i = 0; i < 50; i++) {
             testwrapper.step();
 
+
+            System.out.println(route_list);
+            testwrapper.add_Vehicle("test"+i, route_list.get(1));
             List<String> cars_list = testwrapper.getVehicleIDs();
+
 
             //prints position for every vehicle in the simulation
 
