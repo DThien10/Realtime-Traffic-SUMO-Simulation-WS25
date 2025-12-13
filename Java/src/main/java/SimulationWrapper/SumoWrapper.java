@@ -60,7 +60,6 @@ public class SumoWrapper {
                 Thread.sleep(500);
             }
         }
-
     }
 
 
@@ -178,6 +177,17 @@ public class SumoWrapper {
         return new ArrayList<>(Route.getIDList());
     }
 
+    public List<String> get_customRouteIDList() {
+        List<String> all_Routes = new ArrayList<>(Route.getIDList());
+        List<String> custom_Routes = new ArrayList<>();
+
+        for (String iter:all_Routes){
+            if(!iter.startsWith("!")){
+                custom_Routes.add(iter);
+            }
+        }
+        return custom_Routes;
+    }
 }
 
 
