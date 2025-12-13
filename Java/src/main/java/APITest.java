@@ -11,20 +11,7 @@ import java.util.Scanner;
 public class APITest {
 
    //function to either connect to sumo with or without gui
-    public static String openguiYN(){
-        Scanner input =new Scanner(System.in);
-        System.out.println("Do you want to open the Simulation with the Sumo GUI?[Y/N]");
-        String answer = input.nextLine().trim().toLowerCase();
-        input.close();
-        boolean open_gui = answer.equals("y");
-        String sumo;
-        if(open_gui){
-            sumo="sumo-gui.exe";
-        }else{
-            sumo="sumo.exe";
-        }
-        return sumo;
-    }
+
 
     public static void main(String[] args) throws InterruptedException {
         //sets up a decimalformat class instance to use later in the output of car coordinates
@@ -46,7 +33,7 @@ public class APITest {
 
 
             System.out.println(route_list);
-            testwrapper.add_Vehicle("test"+i, route_list.get(1));
+            testwrapper.add_Vehicle("test"+i, route_list.get(9));
             List<String> cars_list = testwrapper.getVehicleIDs();
 
 

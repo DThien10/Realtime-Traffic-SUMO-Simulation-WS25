@@ -5,6 +5,7 @@ import org.eclipse.sumo.libtraci.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 import java.util.logging.Logger;
 
 public class SumoWrapper {
@@ -17,6 +18,20 @@ public class SumoWrapper {
     public SumoWrapper(String configPath) {
         this.configPath = configPath;
     }
+    public static String openguiYN(){
+        Scanner input =new Scanner(System.in);
+        System.out.println("Do you want to open the Simulation with the Sumo GUI?[Y/N]");
+        String answer = input.nextLine().trim().toLowerCase();
+        input.close();
+        boolean open_gui = answer.equals("y");
+        String sumo;
+        if(open_gui){
+            sumo="sumo-gui.exe";
+        }else{
+            sumo="sumo.exe";
+        }
+        return sumo;
+    }
 
     public void start () throws InterruptedException {
         Simulation.preloadLibraries();
@@ -24,7 +39,7 @@ public class SumoWrapper {
 
 
     try{
-        ProcessBuilder pb = new ProcessBuilder("sumo-gui",
+        ProcessBuilder pb = new ProcessBuilder(openguiYN(),
                 "-c", configPath,
                 "--remote-port", String.valueOf(port)
         );
