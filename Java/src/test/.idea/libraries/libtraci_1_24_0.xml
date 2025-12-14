@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="libtraci-1.24.0">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../../../../../../../../Program Files (x86)/Eclipse/Sumo/bin/libtraci-1.24.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -1,6 +1,6 @@
 package SimulationWrapper;
 
-
+import GUI.*;
 import org.eclipse.sumo.libtraci.Simulation;
 
 import java.util.List;
@@ -13,7 +13,7 @@ public class SimRunner {
     SumoWrapper wrapper;
     SimData data = new SimData();
     // Panel used to draw the map
-
+    private final MapPanel mapPanel = new MapPanel();
     DecimalFormat cutoffdecimals = new DecimalFormat("#.00");
 
     private final static Logger SimRunLogger = Logger.getLogger(SimRunner.class.getName());
@@ -85,8 +85,9 @@ public class SimRunner {
         }
         SimRunLogger.info("Injected "+addition_counter+" Vehicles randomly to the Simulation");
     }
-
-
+    public MapPanel getMapPanel() {
+        return mapPanel;
+    }
     public void quit(){
         wrapper.quit();
     }
