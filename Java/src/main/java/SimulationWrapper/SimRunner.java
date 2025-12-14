@@ -53,6 +53,7 @@ public class SimRunner {
 
         List<String> custom_cars_list = data.get_addedVehicles();
         System.out.println("List of added Cars throughout the simulation: "+custom_cars_list);
+        SimRunLogger.info("Added "+data.get_addedVehicles().size()+" Vehicles throughout the whole Simulation");
 
 
         wrapper.quit();

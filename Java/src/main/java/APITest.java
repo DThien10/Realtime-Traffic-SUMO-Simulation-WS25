@@ -24,7 +24,7 @@ public class APITest {
 
         SimRunner runner = new SimRunner(configPath);
 
-        runner.run(50);
+        runner.run(100);
 
 /*
         Simulation.preloadLibraries();
