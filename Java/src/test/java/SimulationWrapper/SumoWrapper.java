@@ -12,13 +12,13 @@ public class SumoWrapper {
     private final static Logger WrapperLogger = Logger.getLogger(SumoWrapper.class.getName());
     private Process sumoProcess;
     private final int port=48042;
-
+    private String TrafficLightState="DEFAULT";
     private final String configPath;
 
     public SumoWrapper(String configPath) {
         this.configPath = configPath;
     }
-    public static String openguiYN(){
+    private static String openguiYN(){
         Scanner input =new Scanner(System.in);
         System.out.println("Do you want to open the Simulation with the Sumo GUI?[Y/N]");
         String answer = input.nextLine().trim().toLowerCase();
@@ -124,8 +124,12 @@ public class SumoWrapper {
     }
 
     public Position get_VehiclePos (String id){
+        boolean special;
+        if(id.startsWith("Random_add")){
+            special = true;
+        }else {special=false;}
         TraCIPosition pos = Vehicle.getPosition(id);
-        return new Position(pos.getX(), pos.getY());
+        return new Position(pos.getX(), pos.getY(),special);
 
     }
 
@@ -195,7 +199,20 @@ public class SumoWrapper {
     public void toggleTls(){
         List<String> allTls = get_Trafficlightids();
 
+        for(String id:allTls){
+            if(TrafficLight.getRedYellowGreenState(id).equals("rrrrrrrrrrr")){
+                TrafficLight.setRedYellowGreenState(id,"rrrrrrrrrrr");
+                TrafficLightState="ALL RED";
+            }
+            else {
+                TrafficLight.setRedYellowGreenState(id,"GGgrrGGGrrr");
+                TrafficLightState="Default";
+            }
+
+        }
+
     }
+    public String get_TrafficlightState(){return TrafficLightState;}
 }
 
 

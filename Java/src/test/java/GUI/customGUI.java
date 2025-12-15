@@ -23,10 +23,10 @@ import javax.swing.Timer;
 import javax.swing.border.TitledBorder;
 
 /**
- * GUI class for controlling and visualizing the SUMO simulation.
+ * customGUI class for controlling and visualizing the SUMO simulation.
  * Provides panels for status, map, simulation control, speed, vehicle injection, and traffic light control.
  */
-public class GUI extends JFrame {
+public class customGUI extends JFrame {
 
     private final SimRunner controller;
 
@@ -46,11 +46,11 @@ public class GUI extends JFrame {
     private final DecimalFormat df = new DecimalFormat("#.00");
 
     /**
-     * Constructs the GUI window and initializes all panels.
+     * Constructs the customGUI window and initializes all panels.
      *
      * @param controller the SimulationController instance used to control the simulation
      */
-    public GUI(SimRunner controller) {
+    public customGUI(SimRunner controller) {
         super("SUMO Simulation Control Center");
         this.controller = controller;
 
@@ -256,7 +256,7 @@ public class GUI extends JFrame {
 
             timeLabel.setText("Time: " + df.format(time) + " s");
             vehicleLabel.setText("Vehicles: " + vehicles);
-            specialLabel.setText("Special: " + special);
+            specialLabel.setText("Custom added Vehicles: " + special);
             tlsLabel.setText("TLS: " + tlsState);
         }).start();
     }

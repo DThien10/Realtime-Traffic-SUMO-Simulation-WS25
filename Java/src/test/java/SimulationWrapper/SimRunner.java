@@ -3,6 +3,7 @@ package SimulationWrapper;
 import GUI.*;
 import org.eclipse.sumo.libtraci.Simulation;
 
+import javax.swing.*;
 import java.util.List;
 import java.text.DecimalFormat;
 import java.util.logging.Logger;
@@ -13,7 +14,7 @@ public class SimRunner {
     SumoWrapper wrapper;
     SimData data = new SimData();
     // Panel used to draw the map
-    private final MapPanel mapPanel = new MapPanel();
+    private final MapPanel mapPanel;
     DecimalFormat cutoffdecimals = new DecimalFormat("#.00");
 
     private final static Logger SimRunLogger = Logger.getLogger(SimRunner.class.getName());
@@ -21,29 +22,35 @@ public class SimRunner {
     private volatile int stepDelayMs=100;
 
 
-    public SimRunner(String configPath){
-
+    public SimRunner(String configPath,MapPanel mapPanel){
+        this.mapPanel=mapPanel;
         this.configPath=configPath;
         wrapper=new SumoWrapper(configPath);
     }
 
-    public void run(int steps) throws InterruptedException {
-
+    public void start() throws InterruptedException {
         wrapper.start();
 
         data.initiate(wrapper);
 
+    }
+
+    public void run(int steps) {
+
+
         List<String> custom_route_list = data.get_customRoutes();
         for (int i = 0; i < steps; i++) {
+
             wrapper.step();
             data.update(wrapper);
 
 
             System.out.println(custom_route_list);
-           if( wrapper.add_Vehicle("test"+i, custom_route_list.get(3))){
+          /* if( wrapper.add_Vehicle("test"+i, custom_route_list.get(3))){
                data.UpdateAdded_Vehicles("test"+i);
-           }
-           random_add_Vehicle(50);
+           }*/
+            //stress test adds 50 vehicles per step
+              random_add_Vehicle(50);
 
             List<String> cars_list = data.get_allVehicles();
 
@@ -54,7 +61,10 @@ public class SimRunner {
                 Position pos = wrapper.get_VehiclePos(id);
                 System.out.println("  " + id + " at (" + cutoffdecimals.format(pos.getX())  + ", " + cutoffdecimals.format(pos.getY()) + ")");
 
-            }}
+
+            }
+            mapPanel.updateFromSimulation(data.getAllVehicle_Positions());
+        }
 
         List<String> custom_cars_list = data.get_addedVehicles();
         System.out.println("List of added Cars throughout the simulation: "+custom_cars_list);
@@ -88,6 +98,11 @@ public class SimRunner {
     public MapPanel getMapPanel() {
         return mapPanel;
     }
+    private void updateMap() {
+        if (mapPanel != null) {
+            mapPanel.updateFromSimulation(data.getAllVehicle_Positions());
+        }
+    }
     public void quit(){
         wrapper.quit();
     }
@@ -97,6 +112,16 @@ public class SimRunner {
     public void forceToggleTrafficLight(){
         wrapper.toggleTls();
     }
-
-
+    public double getSimulationTime(){
+        return wrapper.time();
+    }
+    public int getVehicleCount(){
+        return wrapper.get_VehicleCount();
+    }
+    public int getSpecialVehicleCount(){
+        return data.get_addedVehicles().size();
+    }
+    public String getTlsStateName(){
+        return wrapper.get_TrafficlightState();
+    }
 }

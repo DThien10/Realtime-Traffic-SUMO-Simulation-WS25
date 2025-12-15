@@ -9,9 +9,12 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseWheelEvent;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JPanel;
 
+import SimulationWrapper.Position;
+import SimulationWrapper.SimRunner;
 import org.eclipse.sumo.libtraci.StringVector;
 import org.eclipse.sumo.libtraci.TraCIPosition;
 import org.eclipse.sumo.libtraci.Vehicle;
@@ -22,8 +25,8 @@ import org.eclipse.sumo.libtraci.Vehicle;
  */
 public class MapPanel extends JPanel {
 
-    private final java.util.List<TraCIPosition> normalVehicles = new ArrayList<>();
-    private final java.util.List<TraCIPosition> specialVehicles = new ArrayList<>();
+    private final java.util.List<Position> normalVehicles = new ArrayList<>();
+    private final java.util.List<Position> specialVehicles = new ArrayList<>();
 
     private double zoom = 1.0;
     private int offsetX = 0;
@@ -99,17 +102,16 @@ public class MapPanel extends JPanel {
      * Updates vehicle positions from the SUMO simulation.
      * Distinguishes between normal vehicles and special vehicles based on ID prefix.
      */
-    public void updateFromSimulation() {
+    public void updateFromSimulation(List<Position> allVehiclesPos) {
         normalVehicles.clear();
         specialVehicles.clear();
 
-        StringVector ids = Vehicle.getIDList();
-        for (String id : ids) {
-            TraCIPosition pos = Vehicle.getPosition(id);
-            if (pos == null) continue;
+
+        for (Position pos : allVehiclesPos) {
+
 
             // Distinguish special vehicles by ID prefix
-            if (id.startsWith("SPECIAL_CAR_")) {
+            if (pos.special()) {
                 specialVehicles.add(pos);
             } else {
                 normalVehicles.add(pos);
@@ -139,13 +141,13 @@ public class MapPanel extends JPanel {
 
         // Draw normal vehicles
         g2.setColor(Color.WHITE);
-        for (TraCIPosition p : normalVehicles) {
+        for (Position p : normalVehicles) {
             g2.fillOval((int)p.getX() - 3, (int)p.getY() - 3, 6, 6);
         }
 
         // Draw special vehicles
         g2.setColor(Color.YELLOW);
-        for (TraCIPosition p : specialVehicles) {
+        for (Position p : specialVehicles) {
             g2.fillOval((int)p.getX() - 5, (int)p.getY() - 5, 10, 10);
         }
     }
