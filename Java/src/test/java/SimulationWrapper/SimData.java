@@ -4,12 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SimData {
+    //Simulation State Data
     private  List<String> all_Vehicles;
     private  List<String> added_Vehicles=new ArrayList<>();
     private  List<String> custom_Routes;
     private List<Position> allVehicle_Positions=new ArrayList<>();
 
-
+//getter/setter/updater methods
     public  List<String> get_allVehicles(){return all_Vehicles;}
     public  List<String> get_addedVehicles(){return added_Vehicles;}
     public  List<String> get_customRoutes(){return custom_Routes;}

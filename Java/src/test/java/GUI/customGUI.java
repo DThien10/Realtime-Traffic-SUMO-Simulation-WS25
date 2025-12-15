@@ -128,15 +128,15 @@ public class customGUI extends JFrame {
 
         JButton pauseBtn = new JButton("Pause");
         JButton resumeBtn = new JButton("Resume");
-        JButton stopBtn = new JButton("Stop");
+        JButton stopBtn = new JButton("Quit");
 
         pauseBtn.addActionListener(e -> {
-            paused = true;
+            controller.pause();
             appendLog("Simulation paused");
         });
 
         resumeBtn.addActionListener(e -> {
-            paused = false;
+            controller.unpause();
             appendLog("Simulation resumed");
         });
 

@@ -14,6 +14,7 @@ public class SumoWrapper {
     private final int port=48042;
     private String TrafficLightState="DEFAULT";
     private final String configPath;
+    private boolean pause = false;
 
     public SumoWrapper(String configPath) {
         this.configPath = configPath;
@@ -93,6 +94,12 @@ public class SumoWrapper {
         }
 
     }
+    public void pause(){
+        pause=true;
+    }
+    public void unpause(){
+        pause=false;
+    }
     public void quit(){
 
         if(sumoProcess != null && sumoProcess.isAlive() ){
@@ -102,7 +109,9 @@ public class SumoWrapper {
     }
 
     public void step(){
-        Simulation.step();
+        if(!pause){
+            Simulation.step();
+        }
     }
 
     public double time(){

@@ -34,6 +34,12 @@ public class SimRunner {
         data.initiate(wrapper);
 
     }
+    public void pause(){
+        wrapper.pause();
+    }
+    public void unpause(){
+        wrapper.unpause();
+    }
 
     public void run(int steps) {
 
