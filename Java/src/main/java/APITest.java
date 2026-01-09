@@ -1,7 +1,8 @@
 import org.eclipse.sumo.libtraci.*;
 import SimulationWrapper.*;
+import GUI.*;
 
-
+import javax.swing.*;
 
 
 //basic connection showcase of sumo using libtraci
@@ -14,45 +15,30 @@ public class APITest {
         //sets path to sumo files according to user directory
         String base = System.getProperty("user.dir");
 
-        String configPath = base + "/Java/src/main/resources/SumoConfig/altstadt.sumocfg";
-        String routePath  = base + "/Java/src/main/resources/SumoConfig/test.rou.xml";
+        String configPath = "C:\\Users\\Marko\\Documents\\GitHub\\Realtime-Traffic-SUMO-Simulation-WS25\\Java\\src\\main\\resources\\SumoConfig/altstadt.sumocfg";
+        String routePath  = "C:\\Users\\Marko\\Documents\\GitHub\\Realtime-Traffic-SUMO-Simulation-WS25\\Java\\src\\main\\resources\\SumoConfig/test.rou.xml";
 
-        SimRunner runner = new SimRunner(configPath);
+        MapPanel mapPanel = new MapPanel();
+        JFrame frame = new JFrame("SUMO Realtime Map"); // create a frame(window) to hold the map panel
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // application is closed when the frame is closed
+        frame.add(mapPanel);
 
-        runner.run(100);
+        frame.pack(); // adjust frame size to fit the preferred size of components inside it
+        frame.setLocationRelativeTo(null); // center the frame on the screen
+        frame.setVisible(true); // make the frame visible
 
-/*
-        Simulation.preloadLibraries();
-        //loading up instance of sumo with given variables
-        Simulation.start(new StringVector(new String[]{
-                openguiYN(),
-                "-c", configPath,
-        }));
+        // Controller for Simulation and Map
+        SimRunner controller = new SimRunner(configPath,mapPanel);
 
-
-        //steps through simulation
-        for (int i = 0; i < 1000; i++) {
-            Simulation.step();
-            int cars_amount = Vehicle.getIDCount();
-            System.out.println("Step: " + Simulation.getTime() + " ("+cars_amount+" cars in the Simulation)");
-            StringVector cars_list = Vehicle.getIDList();
-
-            //prints position for every vehicle in the simulation
-
-            for (String id : cars_list) {
-                TraCIPosition pos = Vehicle.getPosition(id);
-                System.out.println("  " + id + " at (" + cutoffdecimals.format(pos.getX())  + ", " + cutoffdecimals.format(pos.getY()) + ")");
-
-            }}
-        //summarizes amount and id of traffic lights at end of simulation
-        int trafficlights_amount = TrafficLight.getIDCount();
-        StringVector trafficlights_list =TrafficLight.getIDList();
-
-            System.out.println("This Simulation contained "+trafficlights_amount+ " Traffic lights with the ids: "+ trafficlights_list);
+        // Start SUMO simulation
+        controller.start();
+        // Launch customGUI with controls
+        SwingUtilities.invokeLater(() -> new customGUI(controller));
+        // Continue running steps in a separate thread
+        new Thread(() -> controller.run(10000)).start();
 
 
 
-        Simulation.close(); */
 
     }
 }
