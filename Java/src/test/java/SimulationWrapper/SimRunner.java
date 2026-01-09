@@ -19,7 +19,9 @@ public class SimRunner {
 
     private final static Logger SimRunLogger = Logger.getLogger(SimRunner.class.getName());
 
-    private volatile int stepDelayMs=100;
+    private volatile int stepDelayMs=0;
+
+    private volatile boolean pause = false;
 
 
     public SimRunner(String configPath,MapPanel mapPanel){
@@ -35,10 +37,10 @@ public class SimRunner {
 
     }
     public void pause(){
-        wrapper.pause();
+        pause=true;
     }
     public void unpause(){
-        wrapper.unpause();
+        pause=false;
     }
 
     public void run(int steps) {
@@ -46,17 +48,17 @@ public class SimRunner {
 
         List<String> custom_route_list = data.get_customRoutes();
         for (int i = 0; i < steps; i++) {
-
+            while(pause){
+                try{
+                    Thread.sleep(100);
+                }catch (Exception e){
+                    throw new RuntimeException();
+                }
+            }
             wrapper.step();
             data.update(wrapper);
 
 
-            System.out.println(custom_route_list);
-          /* if( wrapper.add_Vehicle("test"+i, custom_route_list.get(3))){
-               data.UpdateAdded_Vehicles("test"+i);
-           }*/
-            //stress test adds 50 vehicles per step
-              random_add_Vehicle(50);
 
             List<String> cars_list = data.get_allVehicles();
 
@@ -70,6 +72,12 @@ public class SimRunner {
 
             }
             mapPanel.updateFromSimulation(data.getAllVehicle_Positions());
+
+            try {
+                Thread.sleep(stepDelayMs);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         List<String> custom_cars_list = data.get_addedVehicles();

@@ -38,7 +38,7 @@ public class customGUI extends JFrame {
 
     // ===== CONTROL FLAGS =====
     private boolean paused = false;
-    private int stepDelayMs = 100;
+    private int stepDelayMs = 0;
 
     // ===== LOG AREA =====
     private final JTextArea logArea = new JTextArea();
@@ -161,7 +161,7 @@ public class customGUI extends JFrame {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBorder(new TitledBorder("Speed"));
 
-        JSlider speedSlider = new JSlider(10, 500, stepDelayMs);
+        JSlider speedSlider = new JSlider(0, 500, stepDelayMs);
         JLabel label = new JLabel("Delay: " + stepDelayMs + " ms");
 
         speedSlider.addChangeListener(e -> {

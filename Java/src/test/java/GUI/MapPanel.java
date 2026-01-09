@@ -108,8 +108,6 @@ public class MapPanel extends JPanel {
 
 
         for (Position pos : allVehiclesPos) {
-
-
             // Distinguish special vehicles by ID prefix
             if (pos.special()) {
                 specialVehicles.add(pos);
