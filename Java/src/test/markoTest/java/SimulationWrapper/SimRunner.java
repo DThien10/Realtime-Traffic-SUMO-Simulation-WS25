@@ -3,9 +3,9 @@ package SimulationWrapper;
 import GUI.*;
 import org.eclipse.sumo.libtraci.Simulation;
 
-import javax.swing.*;
 import java.util.List;
 import java.text.DecimalFormat;
+import java.util.Set;
 import java.util.logging.Logger;
 
 public class SimRunner {
@@ -60,7 +60,7 @@ public class SimRunner {
 
 
 
-            List<String> cars_list = data.get_allVehicles();
+           /* List<String> cars_list = data.get_allVehicles();
 
 
             //prints position for every vehicle in the simulation
@@ -68,10 +68,8 @@ public class SimRunner {
             for (String id : cars_list) {
                 Position pos = wrapper.get_VehiclePos(id);
                 System.out.println("  " + id + " at (" + cutoffdecimals.format(pos.getX())  + ", " + cutoffdecimals.format(pos.getY()) + ")");
-
-
-            }
-            mapPanel.updateFromSimulation(data.getAllVehicle_Positions());
+            }*/
+            mapPanel.updateFromSimulation(data.get_SimVehicles());
 
             try {
                 Thread.sleep(stepDelayMs);
@@ -80,7 +78,7 @@ public class SimRunner {
             }
         }
 
-        List<String> custom_cars_list = data.get_addedVehicles();
+        Set<String> custom_cars_list = data.get_addedVehicles();
         System.out.println("List of added Cars throughout the simulation: "+custom_cars_list);
         SimRunLogger.info("Added "+data.get_addedVehicles().size()+" Vehicles throughout the whole Simulation");
 
@@ -114,7 +112,7 @@ public class SimRunner {
     }
     private void updateMap() {
         if (mapPanel != null) {
-            mapPanel.updateFromSimulation(data.getAllVehicle_Positions());
+            mapPanel.updateFromSimulation(data.get_SimVehicles());
         }
     }
     public void quit(){
@@ -123,7 +121,7 @@ public class SimRunner {
     public void setStepDelayMs(int ms) {
         this.stepDelayMs = ms;
     }
-    public void forceToggleTrafficLight(){
+    public void forceToggleallTrafficLights(){
         wrapper.toggleTls();
     }
     public double getSimulationTime(){

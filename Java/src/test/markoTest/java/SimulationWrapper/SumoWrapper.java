@@ -117,23 +117,17 @@ public class SumoWrapper {
         return new ArrayList<>(Vehicle.getIDList());
     }
     public boolean VehicleExists(String CarID){
-        if(Vehicle.getIDList().contains(CarID)){
-            return true;
-        }else{
-            return false;
-        }
+        return Vehicle.getIDList().contains(CarID);
     }
     public int get_VehicleCount () {
         return Vehicle.getIDCount();
     }
 
     public Position get_VehiclePos (String id){
-        boolean special;
-        if(id.startsWith("Random_add")){
-            special = true;
-        }else {special=false;}
+
+
         TraCIPosition pos = Vehicle.getPosition(id);
-        return new Position(pos.getX(), pos.getY(),special);
+        return new Position(pos.getX(), pos.getY());
 
     }
 
@@ -163,13 +157,25 @@ public class SumoWrapper {
     public void set_VehicleSpeed(String CarID,double speed){
         Vehicle.setSpeed(CarID,speed);
     }
+    public String getVehicleRouteID(String CarID){
+        return Vehicle.getRouteID(CarID);
+    }
+    public double getVehicle_waitingtime(String CarID){
+        return Vehicle.getWaitingTime(CarID);
+    }
+    public double getVehicle_accumulatedwaitingtime(String CarID){
+        return Vehicle.getAccumulatedWaitingTime(CarID);
+    }
     public List<String> get_Trafficlightids(){
         return new ArrayList<>(TrafficLight.getIDList());
+    }
+    public boolean trafficlight_exists(String TlID){
+        return get_Trafficlightids().contains(TlID);
     }
     public int get_TrafficlightPhase(String id){
         return TrafficLight.getPhase(id);
     }
-    public String get_TrafficlightColor(String id){
+    public String get_Trafficstate(String id){
         return TrafficLight.getRedYellowGreenState(id);
     }
     public double get_Trafficlight_phaseduration(String id){

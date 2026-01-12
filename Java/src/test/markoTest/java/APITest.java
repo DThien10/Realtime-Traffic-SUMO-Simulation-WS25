@@ -1,4 +1,3 @@
-import org.eclipse.sumo.libtraci.*;
 import SimulationWrapper.*;
 import GUI.*;
 
@@ -33,7 +32,7 @@ public class APITest {
         // Start SUMO simulation
         controller.start();
         // Launch customGUI with controls
-        SwingUtilities.invokeLater(() -> new customGUI(controller));
+        SwingUtilities.invokeLater(() -> new CustomGUI(controller));
         // Continue running steps in a separate thread
         new Thread(() -> controller.run(10000)).start();
 
