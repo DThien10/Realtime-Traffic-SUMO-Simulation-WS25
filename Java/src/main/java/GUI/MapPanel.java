@@ -8,11 +8,11 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseWheelEvent;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import javax.swing.JPanel;
 
+import SimulationObjects.SimVehicle;
 import SimulationWrapper.Position;
 import SimulationWrapper.SimRunner;
 import org.eclipse.sumo.libtraci.StringVector;
@@ -25,8 +25,8 @@ import org.eclipse.sumo.libtraci.Vehicle;
  */
 public class MapPanel extends JPanel {
 
-    private final java.util.List<Position> normalVehicles = new ArrayList<>();
-    private final java.util.List<Position> specialVehicles = new ArrayList<>();
+    private Collection<SimVehicle> vehicles;
+
 
     private double zoom = 1.0;
     private int offsetX = 0;
@@ -102,19 +102,8 @@ public class MapPanel extends JPanel {
      * Updates vehicle positions from the SUMO simulation.
      * Distinguishes between normal vehicles and special vehicles based on ID prefix.
      */
-    public void updateFromSimulation(List<Position> allVehiclesPos) {
-        normalVehicles.clear();
-        specialVehicles.clear();
-
-
-        for (Position pos : allVehiclesPos) {
-            // Distinguish special vehicles by ID prefix
-            if (pos.special()) {
-                specialVehicles.add(pos);
-            } else {
-                normalVehicles.add(pos);
-            }
-        }
+    public void updateFromSimulation(Collection<SimVehicle> allVehicles) {
+        vehicles=allVehicles;
         repaint();
     }
 
@@ -137,16 +126,25 @@ public class MapPanel extends JPanel {
         g2.translate(offsetX, offsetY + getHeight()); // translate down
         g2.scale(zoom, -zoom); // invert Y-axis to match SUMO coordinates
 
-        // Draw normal vehicles
-        g2.setColor(Color.WHITE);
-        for (Position p : normalVehicles) {
-            g2.fillOval((int)p.getX() - 3, (int)p.getY() - 3, 6, 6);
+        // Draw vehicles
+
+        for (SimVehicle v : vehicles) {
+            Position p = v.getPosition();
+
+            // Draw special vehicles
+            if(v.isSpecial()){
+                g2.setColor(Color.YELLOW);
+                g2.fillOval((int)p.getX() - 5, (int)p.getY() - 5, 10, 10);
+            }else {
+
+                // Draw normal vehicles
+                g2.setColor(Color.WHITE);
+                g2.fillOval((int) p.getX() - 3, (int) p.getY() - 3, 6, 6);
+            }
         }
 
-        // Draw special vehicles
-        g2.setColor(Color.YELLOW);
-        for (Position p : specialVehicles) {
-            g2.fillOval((int)p.getX() - 5, (int)p.getY() - 5, 10, 10);
-        }
+
+
     }
+    //TODO roadnetwork rendering
 }

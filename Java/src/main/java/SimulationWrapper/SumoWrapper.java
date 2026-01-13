@@ -117,23 +117,17 @@ public class SumoWrapper {
         return new ArrayList<>(Vehicle.getIDList());
     }
     public boolean VehicleExists(String CarID){
-        if(Vehicle.getIDList().contains(CarID)){
-            return true;
-        }else{
-            return false;
-        }
+        return Vehicle.getIDList().contains(CarID);
     }
     public int get_VehicleCount () {
         return Vehicle.getIDCount();
     }
 
     public Position get_VehiclePos (String id){
-        boolean special;
-        if(id.startsWith("Random_add")){
-            special = true;
-        }else {special=false;}
+
+
         TraCIPosition pos = Vehicle.getPosition(id);
-        return new Position(pos.getX(), pos.getY(),special);
+        return new Position(pos.getX(), pos.getY());
 
     }
 
@@ -163,13 +157,25 @@ public class SumoWrapper {
     public void set_VehicleSpeed(String CarID,double speed){
         Vehicle.setSpeed(CarID,speed);
     }
+    public String getVehicleRouteID(String CarID){
+        return Vehicle.getRouteID(CarID);
+    }
+    public double getVehicle_waitingtime(String CarID){
+        return Vehicle.getWaitingTime(CarID);
+    }
+    public double getVehicle_accumulatedwaitingtime(String CarID){
+        return Vehicle.getAccumulatedWaitingTime(CarID);
+    }
     public List<String> get_Trafficlightids(){
         return new ArrayList<>(TrafficLight.getIDList());
+    }
+    public boolean trafficlight_exists(String TlID){
+        return get_Trafficlightids().contains(TlID);
     }
     public int get_TrafficlightPhase(String id){
         return TrafficLight.getPhase(id);
     }
-    public String get_TrafficlightColor(String id){
+    public String get_Trafficstate(String id){
         return TrafficLight.getRedYellowGreenState(id);
     }
     public double get_Trafficlight_phaseduration(String id){
@@ -178,18 +184,40 @@ public class SumoWrapper {
     public double get_Trafficlight_remaining_phaseduration(String id){
         return TrafficLight.getNextSwitch(id)-Simulation.getTime();
     }
-    public List<String> get_EdgesIDList(){
+    public void set_TrafficLightState(String id,String state){
+        TrafficLight.setRedYellowGreenState(id,state);
+    }
+    public String get_TrafficLightProgramm(String trafficLightID) {
+        return TrafficLight.getProgram(trafficLightID);
+    }
+    public void set_TrafficLightProgramm(String trafficLightID,String programm){
+        TrafficLight.setProgram(trafficLightID,programm);
+    }
+
+    public boolean existsEdge(String edgeID) {
+        return get_EdgeIDList().contains(edgeID);
+    }
+    public List<String> get_EdgeIDList(){
         return new ArrayList<>(Edge.getIDList());
     }
     public String get_EdgeStreetname(String id){
         return Edge.getStreetName(id);
+    }
+    public List<String> get_EdgeLastStepVehicleIDs(String edgeID){
+        return new ArrayList<>(Edge.getLastStepVehicleIDs(edgeID));
+    }
+    public int get_EdgeLastStepVehicleCount(String edgeID){
+        return Edge.getLastStepVehicleNumber(edgeID);
+    }
+    public double get_EdgeLastStepAverageSpeed(String edgeID){
+        return Edge.getLastStepMeanSpeed(edgeID);
     }
     public List<String> get_RouteIDList(){
         return new ArrayList<>(Route.getIDList());
     }
 
     public List<String> get_customRouteIDList() {
-        List<String> all_Routes = new ArrayList<>(Route.getIDList());
+        List<String> all_Routes = get_RouteIDList();
         List<String> custom_Routes = new ArrayList<>();
 
         for (String iter:all_Routes){
@@ -200,24 +228,7 @@ public class SumoWrapper {
         return custom_Routes;
     }
 
-    public void toggleTls(){
 
-        // not functional will migrate logic to Trafficlight class
-        List<String> allTls = get_Trafficlightids();
-
-        for(String id:allTls){
-            if(TrafficLight.getRedYellowGreenState(id).equals("rrrrrrrrrrr")){
-                TrafficLight.setRedYellowGreenState(id,"rrrrrrrrrrr");
-                TrafficLightState="ALL RED";
-            }
-            else {
-                TrafficLight.setRedYellowGreenState(id,"GGgrrGGGrrr");
-                TrafficLightState="Default";
-            }
-
-        }
-
-    }
     public String get_TrafficlightState(){return TrafficLightState;}
 }
 

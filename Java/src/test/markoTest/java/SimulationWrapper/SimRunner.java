@@ -42,7 +42,7 @@ public class SimRunner {
         wrapper=new SumoWrapper(configPath);
         data=new SimData(wrapper);
     }
-
+//TODO add gui initialization to start() instead of main method
     public void start() throws InterruptedException {
         wrapper.start();
 
@@ -178,4 +178,6 @@ public class SimRunner {
             default -> throw new IllegalStateException("Unexpected value: " + TRAFFIC_LIGHT_STATUS);
         };
     }
+    //TODO make a clear function to delete all current cars in the simulation
+    //TODO be able to restart simulation
 }

@@ -84,7 +84,7 @@ public class SimData {
 
     }
 
-
+//TODO start working on filtering methods
 
 
 }

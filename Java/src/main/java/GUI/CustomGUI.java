@@ -26,7 +26,7 @@ import javax.swing.border.TitledBorder;
  * customGUI class for controlling and visualizing the SUMO simulation.
  * Provides panels for status, map, simulation control, speed, vehicle injection, and traffic light control.
  */
-public class customGUI extends JFrame {
+public class CustomGUI extends JFrame {
 
     private final SimRunner controller;
 
@@ -50,7 +50,7 @@ public class customGUI extends JFrame {
      *
      * @param controller the SimulationController instance used to control the simulation
      */
-    public customGUI(SimRunner controller) {
+    public CustomGUI(SimRunner controller) {
         super("SUMO Simulation Control Center");
         this.controller = controller;
 
@@ -213,7 +213,7 @@ public class customGUI extends JFrame {
         JButton toggleBtn = new JButton("Toggle TLS");
 
         toggleBtn.addActionListener(e -> {
-            controller.forceToggleTrafficLight();
+            controller.forceToggleallTrafficLights();
             appendLog("Traffic light toggled");
         });
 
