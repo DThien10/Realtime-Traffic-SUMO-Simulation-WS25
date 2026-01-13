@@ -1,5 +1,5 @@
 package SimulationWrapper;
-
+//this class is being used instead of the libtraci Traciposition object for ease of use
 public record Position(double x, double y) {
 
 

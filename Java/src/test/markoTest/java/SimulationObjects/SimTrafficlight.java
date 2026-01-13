@@ -1,19 +1,18 @@
 package SimulationObjects;
 
 import SimulationWrapper.SumoWrapper;
-import org.eclipse.sumo.libtraci.Simulation;
-import org.eclipse.sumo.libtraci.TrafficLight;
-
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public class SimTrafficlight extends SimObject{
 
     private String state;
     private String originalState;
+    private final String originalProgramm;
 
-    SimTrafficlight(String id, SumoWrapper wrapper){
+    public SimTrafficlight(String id, SumoWrapper wrapper){
         super(id, wrapper);
+        state = wrapper.get_Trafficstate(id);
+        originalState=state;
+        originalProgramm=wrapper.get_TrafficLightProgramm(id);
     }
 
     @Override
@@ -43,8 +42,31 @@ public class SimTrafficlight extends SimObject{
         // Posted by Sean Patrick Floyd, modified by community. See post 'Timeline' for change history
         // Retrieved 2026-01-11, License - CC BY-SA 4.0
 
-        String state= "*".repeat(originalState.length());
+        System.out.println(state+" : old state");
+        String state= "r".repeat(originalState.length());
+        wrapper.set_TrafficLightState(id,state);
+        System.out.println(state+" : new state");
 
+
+    }
+
+    public void set_green(){
+
+
+        System.out.println(state+" : old state");
+        state= "G".repeat(originalState.length());
+        wrapper.set_TrafficLightState(id,state);
+        System.out.println(state+" : new state");
+
+
+    }
+
+    public void set_original(){
+        System.out.println(state+" : old state");
+        state= originalState;
+        wrapper.set_TrafficLightState(id,state);
+        wrapper.set_TrafficLightProgramm(id,"0");
+        System.out.println(originalProgramm+" : program running");
     }
 
 

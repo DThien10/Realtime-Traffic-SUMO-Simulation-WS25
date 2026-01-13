@@ -1,18 +1,28 @@
 package SimulationWrapper;
 
 import GUI.*;
+import SimulationObjects.SimEdge;
+import SimulationObjects.SimTrafficlight;
 import org.eclipse.sumo.libtraci.Simulation;
 
 import java.util.List;
 import java.text.DecimalFormat;
+import java.util.Random;
 import java.util.Set;
 import java.util.logging.Logger;
 
 public class SimRunner {
 
+    int testcounter =0;
+    final static int DEFAULT =0;
+    final static int ALL_RED=1;
+    final static int ALL_GREEN=2;
+
+    private int TRAFFIC_LIGHT_STATUS = DEFAULT;
+
     String configPath;
     SumoWrapper wrapper;
-    SimData data = new SimData();
+    SimData data ;
     // Panel used to draw the map
     private final MapPanel mapPanel;
     DecimalFormat cutoffdecimals = new DecimalFormat("#.00");
@@ -24,16 +34,19 @@ public class SimRunner {
     private volatile boolean pause = false;
 
 
+
+
     public SimRunner(String configPath,MapPanel mapPanel){
         this.mapPanel=mapPanel;
         this.configPath=configPath;
         wrapper=new SumoWrapper(configPath);
+        data=new SimData(wrapper);
     }
 
     public void start() throws InterruptedException {
         wrapper.start();
 
-        data.initiate(wrapper);
+        data.initiate();
 
     }
     public void pause(){
@@ -56,20 +69,19 @@ public class SimRunner {
                 }
             }
             wrapper.step();
-            data.update(wrapper);
 
-
-
-           /* List<String> cars_list = data.get_allVehicles();
-
-
-            //prints position for every vehicle in the simulation
-
-            for (String id : cars_list) {
-                Position pos = wrapper.get_VehiclePos(id);
-                System.out.println("  " + id + " at (" + cutoffdecimals.format(pos.getX())  + ", " + cutoffdecimals.format(pos.getY()) + ")");
-            }*/
+            data.update();
             mapPanel.updateFromSimulation(data.get_SimVehicles());
+
+            //Edge average test
+            if(testcounter%100==0) {
+                for (SimEdge e : data.getEdgesSet()) {
+                    System.out.println(e.getId() + ": Average speed: " + e.getAverageSpeed());
+                    System.out.println(e.getId() + ": Average cars: " + e.getAverageCars());
+
+                }
+            }
+            testcounter++;
 
             try {
                 Thread.sleep(stepDelayMs);
@@ -90,7 +102,7 @@ public class SimRunner {
         String newID;
         String random_route;
         List<String> all_routes = data.get_customRoutes();
-        java.util.Random random_number = new java.util.Random((long) Simulation.getTime());
+        Random random_number = new Random((long) Simulation.getTime());
         int random;
         int all_route_length = all_routes.size();
         int addition_counter=0;
@@ -121,8 +133,33 @@ public class SimRunner {
     public void setStepDelayMs(int ms) {
         this.stepDelayMs = ms;
     }
-    public void forceToggleallTrafficLights(){
-        wrapper.toggleTls();
+
+    //cycles through all red, all green and default states for the trafficlights
+    public void forceToggleallTrafficLights() {
+
+
+        Set<SimTrafficlight> trafficlights = data.getTrafficlightsSet();
+
+
+        if (TRAFFIC_LIGHT_STATUS == DEFAULT) {
+
+            for (SimTrafficlight t : trafficlights) {
+                t.set_red();
+
+            }
+            TRAFFIC_LIGHT_STATUS=ALL_RED;
+
+        } else if (TRAFFIC_LIGHT_STATUS == ALL_RED) {
+            for (SimTrafficlight t : trafficlights) {
+                t.set_green();
+            }
+            TRAFFIC_LIGHT_STATUS=ALL_GREEN;
+        }else if(TRAFFIC_LIGHT_STATUS == ALL_GREEN){
+            for (SimTrafficlight t : trafficlights){
+                t.set_original();
+            }
+            TRAFFIC_LIGHT_STATUS=DEFAULT;
+        }
     }
     public double getSimulationTime(){
         return wrapper.time();
@@ -134,6 +171,11 @@ public class SimRunner {
         return data.get_addedVehicles().size();
     }
     public String getTlsStateName(){
-        return wrapper.get_TrafficlightState();
+        return switch (TRAFFIC_LIGHT_STATUS){
+            case DEFAULT -> "Default";
+            case ALL_RED -> "All Red";
+            case ALL_GREEN -> "All Green";
+            default -> throw new IllegalStateException("Unexpected value: " + TRAFFIC_LIGHT_STATUS);
+        };
     }
 }
