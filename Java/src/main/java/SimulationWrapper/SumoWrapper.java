@@ -6,6 +6,16 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Logger;
 
+import org.eclipse.sumo.libtraci.Edge;
+import org.eclipse.sumo.libtraci.IntStringPair;
+import org.eclipse.sumo.libtraci.Junction;
+import org.eclipse.sumo.libtraci.Route;
+import org.eclipse.sumo.libtraci.Simulation;
+import org.eclipse.sumo.libtraci.TraCIColor;
+import org.eclipse.sumo.libtraci.TraCIPosition;
+import org.eclipse.sumo.libtraci.TrafficLight;
+import org.eclipse.sumo.libtraci.Vehicle;
+
 public class SumoWrapper {
     private final static Logger WrapperLogger = Logger.getLogger(SumoWrapper.class.getName());
     private Process sumoProcess;
@@ -228,6 +238,13 @@ public class SumoWrapper {
 
 
     public String get_TrafficlightState(){return TrafficLightState;}
+
+    // TEST TRAFFIC LIGHT
+    public Position get_TrafficLightPosition(String trafficLightId) {
+    TraCIPosition p = Junction.getPosition(trafficLightId);
+    return new Position(p.getX(), p.getY());
+    // TEST TRAFFIC LIGHT
+}
 }
 
 

@@ -1,9 +1,16 @@
 package SimulationWrapper;
 
 import java.text.DecimalFormat;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.logging.Logger;
+
+import org.eclipse.sumo.libtraci.Simulation;
+
+import GUI.MapPanel;
+import SimulationObjects.SimEdge;
+import SimulationObjects.SimTrafficlight;
 
 public class SimRunner {
 
@@ -65,7 +72,7 @@ public class SimRunner {
             wrapper.step();
 
             data.update();
-            mapPanel.updateFromSimulation(data.get_SimVehicles());
+            mapPanel.updateFromSimulation(data.get_SimVehicles(), data.getTrafficlightsSet());
 
             //Edge average test
             if(testcounter%100==0) {

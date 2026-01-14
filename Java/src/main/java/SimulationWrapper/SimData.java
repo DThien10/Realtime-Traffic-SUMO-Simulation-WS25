@@ -1,5 +1,13 @@
 package SimulationWrapper;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import SimulationObjects.SimEdge;
 import SimulationObjects.SimTrafficlight;
 import SimulationObjects.SimVehicle;
@@ -24,8 +32,8 @@ public class SimData {
     public  Collection<SimVehicle> get_allVehicles(){return Collections.unmodifiableCollection(vehicles.values());}
     public  Set<String> get_addedVehicles(){return Collections.unmodifiableSet(added_Vehicles);}
     public  List<String> get_customRoutes(){return custom_Routes;}
-    public Set<SimTrafficlight> getTrafficlightsSet(){return trafficlights;}
-    public Set<SimEdge> getEdgesSet(){return edges;}
+    public Set<SimTrafficlight> getTrafficlightsSet(){return Collections.unmodifiableSet(trafficlights);}
+    public Set<SimEdge> getEdgesSet(){return Collections.unmodifiableSet(edges);}
     public void initiateEdges(){
         List<String> allEdgesIDs = wrapper.get_EdgeIDList();
 
@@ -79,6 +87,11 @@ public class SimData {
         update_Vehicles();
         updateEdgeData();
 
+        //TEST TRAFFIC LIGHT
+        for (SimTrafficlight t : trafficlights) {
+        t.update();
+    }
+        //TEST TRAFFIC LIGHT
 
     }
 

@@ -1,6 +1,7 @@
 package SimulationObjects;
 
-import SimulationWrapper.SumoWrapper;
+import SimulationWrapper.Position;
+import SimulationWrapper.SumoWrapper;// TEST TRAFFIC LIGHT
 
 public class SimTrafficlight extends SimObject{
 //TODO add phase duration for map rendering
@@ -8,12 +9,34 @@ public class SimTrafficlight extends SimObject{
     private String originalState;
     private final String originalProgramm;
 
+    private Position position; // TEST TRAFFIC LIGHT
+
     public SimTrafficlight(String id, SumoWrapper wrapper){
         super(id, wrapper);
         state = wrapper.get_Trafficstate(id);
         originalState=state;
         originalProgramm=wrapper.get_TrafficLightProgramm(id);
+
+        // TEST TRAFFIC LIGHT
+        try {
+            position = wrapper.get_TrafficLightPosition(id);
+        } catch (Exception e) {
+            position = null;
+        }
+        // TEST TRAFFIC LIGHT
     }
+
+    // TEST TRAFFIC LIGHT
+    public Position getPosition() {
+        return position;
+    }
+
+    public void update() {
+        state = wrapper.get_Trafficstate(id);
+    }
+    // TEST TRAFFIC LIGHT
+
+
 
     @Override
     public boolean exists() {
@@ -25,11 +48,11 @@ public class SimTrafficlight extends SimObject{
     }
 
     public int getPhase(String id){
-        return wrapper.get_TrafficlightPhase(id);
+        return wrapper.get_TrafficlightPhase(this.id);
     }
 
     public double get_phaseduration(String id){
-        return wrapper.get_Trafficlight_phaseduration(id);
+        return wrapper.get_Trafficlight_phaseduration(this.id);
     }
     public double get_remaining_phaseduration(String id) {
         return wrapper.get_Trafficlight_remaining_phaseduration(id);
@@ -43,7 +66,7 @@ public class SimTrafficlight extends SimObject{
         // Retrieved 2026-01-11, License - CC BY-SA 4.0
 
         System.out.println(state+" : old state");
-        String state= "r".repeat(originalState.length());
+        state= "r".repeat(originalState.length());
         wrapper.set_TrafficLightState(id,state);
         System.out.println(state+" : new state");
 
@@ -65,7 +88,8 @@ public class SimTrafficlight extends SimObject{
         System.out.println(state+" : old state");
         state= originalState;
         wrapper.set_TrafficLightState(id,state);
-        wrapper.set_TrafficLightProgramm(id,"0");
+        //wrapper.set_TrafficLightProgramm(id,"0");
+        wrapper.set_TrafficLightProgramm(id, originalProgramm); // TEST TRAFFIC LIGHT
         System.out.println(originalProgramm+" : program running");
     }
 

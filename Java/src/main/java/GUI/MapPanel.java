@@ -8,9 +8,12 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseWheelEvent;
+import java.util.Collection;
+import java.util.Collections;
 
 import javax.swing.JPanel;
 
+import SimulationObjects.SimTrafficlight;
 import SimulationObjects.SimVehicle;
 import SimulationWrapper.Position;
 
@@ -19,10 +22,11 @@ import SimulationWrapper.Position;
  * It supports zooming, panning, and distinguishes normal and special vehicles.
  */
 public class MapPanel extends JPanel {
+    //test//
+    private Collection<SimVehicle> vehicles = Collections.emptyList();
+    private Collection<SimTrafficlight> trafficLights = Collections.emptyList();
 
-    private Collection<SimVehicle> vehicles;
-
-
+    // test //   
     private double zoom = 1.0;
     private int offsetX = 0;
     private int offsetY = 0;
@@ -93,13 +97,21 @@ public class MapPanel extends JPanel {
         repaint();
     }
 
+    public void updateFromSimulation(Collection<SimVehicle> allVehicles,
+                                     Collection<SimTrafficlight> allTls) {
+        vehicles = (allVehicles != null) ? allVehicles : Collections.emptyList();
+        trafficLights = (allTls != null) ? allTls : Collections.emptyList();
+        repaint();
+    }
+
     /**
      * Updates vehicle positions from the SUMO simulation.
      * Distinguishes between normal vehicles and special vehicles based on ID prefix.
      */
     public void updateFromSimulation(Collection<SimVehicle> allVehicles) {
-        vehicles=allVehicles;
-        repaint();
+        //vehicles=allVehicles;
+        //repaint();
+        updateFromSimulation(allVehicles, trafficLights);
     }
 
     /**
@@ -138,6 +150,18 @@ public class MapPanel extends JPanel {
             }
         }
 
+        // TEST TRAFFIC LIGHTS RENDERING
+        for (SimTrafficlight t : trafficLights) {
+        Position p = t.getPosition(); // Location in SimTrafficlight
+        if (p == null) continue;
+
+        String s = t.getState();
+        if (s != null && (s.contains("G") || s.contains("g"))) g2.setColor(Color.GREEN);
+        else if (s != null && (s.contains("y") || s.contains("Y"))) g2.setColor(Color.ORANGE);
+        else g2.setColor(Color.RED);
+
+        g2.fillRect((int)p.getX() - 6, (int)p.getY() - 6, 12, 12);
+    }
 
 
     }
