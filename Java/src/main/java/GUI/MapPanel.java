@@ -8,16 +8,11 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseWheelEvent;
-import java.util.*;
 
 import javax.swing.JPanel;
 
 import SimulationObjects.SimVehicle;
 import SimulationWrapper.Position;
-import SimulationWrapper.SimRunner;
-import org.eclipse.sumo.libtraci.StringVector;
-import org.eclipse.sumo.libtraci.TraCIPosition;
-import org.eclipse.sumo.libtraci.Vehicle;
 
 /**
  * MapPanel is a JPanel that visualizes vehicles in the SUMO simulation.

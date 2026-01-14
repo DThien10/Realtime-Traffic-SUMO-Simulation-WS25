@@ -1,11 +1,5 @@
 package SimulationWrapper;
 
-import GUI.*;
-import SimulationObjects.SimEdge;
-import SimulationObjects.SimTrafficlight;
-import org.eclipse.sumo.libtraci.Simulation;
-
-import java.util.List;
 import java.text.DecimalFormat;
 import java.util.Random;
 import java.util.Set;

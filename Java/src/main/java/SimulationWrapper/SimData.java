@@ -4,8 +4,6 @@ import SimulationObjects.SimEdge;
 import SimulationObjects.SimTrafficlight;
 import SimulationObjects.SimVehicle;
 
-import java.util.*;
-
 public class SimData {
     private final SumoWrapper wrapper;
 

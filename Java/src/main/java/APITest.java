@@ -1,7 +1,9 @@
-import SimulationWrapper.*;
-import GUI.*;
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 
-import javax.swing.*;
+import GUI.CustomGUI;
+import GUI.MapPanel;
+import SimulationWrapper.SimRunner;
 
 
 //basic connection showcase of sumo using libtraci
@@ -14,8 +16,8 @@ public class APITest {
         //sets path to sumo files according to user directory
         String base = System.getProperty("user.dir");
 
-        String configPath = "C:\\Users\\Marko\\Documents\\GitHub\\Realtime-Traffic-SUMO-Simulation-WS25\\Java\\src\\main\\resources\\SumoConfig/altstadt.sumocfg";
-        String routePath  = "C:\\Users\\Marko\\Documents\\GitHub\\Realtime-Traffic-SUMO-Simulation-WS25\\Java\\src\\main\\resources\\SumoConfig/test.rou.xml";
+        String configPath = "C:\\Users\\Lenovo\\Documents\\GitHub\\Realtime-Traffic-SUMO-Simulation-WS25\\Java\\src\\main\\resources\\SumoConfig/altstadt.sumocfg";
+        String routePath  = "C:\\Users\\Lenovo\\Documents\\GitHub\\Realtime-Traffic-SUMO-Simulation-WS25\\Java\\src\\main\\resources\\SumoConfig/test.rou.xml";
 
         MapPanel mapPanel = new MapPanel();
         JFrame frame = new JFrame("SUMO Realtime Map"); // create a frame(window) to hold the map panel
