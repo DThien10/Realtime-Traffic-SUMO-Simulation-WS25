@@ -76,6 +76,8 @@ public class SimRunner {
 
             data.update();
             updateMap();
+
+            System.out.println(wrapper.get_Vehiclecolor(wrapper.getVehicleIDs().getFirst()));
 /*
             //Edge average test
             if(testcounter%100==0) {

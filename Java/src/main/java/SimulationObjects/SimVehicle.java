@@ -2,14 +2,20 @@ package SimulationObjects;
 
 import SimulationWrapper.Position;
 import SimulationWrapper.SumoWrapper;
+import org.eclipse.sumo.libtraci.TraCIColor;
+
+import java.awt.*;
 
 public class SimVehicle extends SimObject{
 //TODO add a color class
     private Position position;
+    private Color color;
     private final boolean special;
 
     public SimVehicle(String id, SumoWrapper wrapper){
         super(id,wrapper);
+        TraCIColor traCIColor= wrapper.get_Vehiclecolor(id);
+        color=new Color(traCIColor.getR(),traCIColor.getG(),traCIColor.getB());
         special= id.startsWith("Random_add");
     }
 
@@ -33,4 +39,5 @@ public class SimVehicle extends SimObject{
     public boolean isSpecial(){
         return special;
     }
+    public Color getColor(){return color;}
 }

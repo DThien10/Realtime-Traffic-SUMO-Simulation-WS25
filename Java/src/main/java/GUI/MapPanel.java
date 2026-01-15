@@ -153,7 +153,7 @@ public class MapPanel extends JPanel {
             }else {
 
                 // Draw normal vehicles
-                g2.setColor(Color.WHITE);
+                g2.setColor(v.getColor());
                 g2.fillOval((int) p.getX() - 3, (int) p.getY() - 3, 6, 6);
             }
         }
