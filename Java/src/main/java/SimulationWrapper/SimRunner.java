@@ -9,7 +9,6 @@ import java.util.logging.Logger;
 import org.eclipse.sumo.libtraci.Simulation;
 
 import GUI.MapPanel;
-import SimulationObjects.SimEdge;
 import SimulationObjects.SimTrafficlight;
 
 public class SimRunner {
@@ -22,6 +21,7 @@ public class SimRunner {
     private int TRAFFIC_LIGHT_STATUS = DEFAULT;
 
     String configPath;
+    String netPath;
     SumoWrapper wrapper;
     SimData data ;
     // Panel used to draw the map
@@ -37,9 +37,10 @@ public class SimRunner {
 
 
 
-    public SimRunner(String configPath,MapPanel mapPanel){
+    public SimRunner(String configPath,String netPath,MapPanel mapPanel){
         this.mapPanel=mapPanel;
         this.configPath=configPath;
+        this.netPath=netPath;
         wrapper=new SumoWrapper(configPath);
         data=new SimData(wrapper);
     }
@@ -47,7 +48,8 @@ public class SimRunner {
     public void start() throws InterruptedException {
         wrapper.start();
 
-        data.initiate();
+        data.initiate(netPath);
+        mapPanel.initiateMap(data.getEdgesSet());
 
     }
     public void pause(){
@@ -60,7 +62,7 @@ public class SimRunner {
     public void run(int steps) {
 
 
-        List<String> custom_route_list = data.get_customRoutes();
+
         for (int i = 0; i < steps; i++) {
             while(pause){
                 try{
@@ -69,11 +71,12 @@ public class SimRunner {
                     throw new RuntimeException();
                 }
             }
+
             wrapper.step();
 
             data.update();
-            mapPanel.updateFromSimulation(data.get_SimVehicles(), data.getTrafficlightsSet());
-
+            updateMap();
+/*
             //Edge average test
             if(testcounter%100==0) {
                 for (SimEdge e : data.getEdgesSet()) {
@@ -83,7 +86,7 @@ public class SimRunner {
                 }
             }
             testcounter++;
-
+                            */
             try {
                 Thread.sleep(stepDelayMs);
             } catch (InterruptedException e) {
@@ -125,7 +128,7 @@ public class SimRunner {
     }
     private void updateMap() {
         if (mapPanel != null) {
-            mapPanel.updateFromSimulation(data.get_SimVehicles());
+            mapPanel.updateFromSimulation(data.getSimulationSnapshot());
         }
     }
     public void quit(){
@@ -134,6 +137,7 @@ public class SimRunner {
     public void setStepDelayMs(int ms) {
         this.stepDelayMs = ms;
     }
+
 
     //cycles through all red, all green and default states for the trafficlights
     public void forceToggleallTrafficLights() {

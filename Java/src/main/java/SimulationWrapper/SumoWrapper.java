@@ -6,15 +6,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Logger;
 
-import org.eclipse.sumo.libtraci.Edge;
-import org.eclipse.sumo.libtraci.IntStringPair;
-import org.eclipse.sumo.libtraci.Junction;
-import org.eclipse.sumo.libtraci.Route;
-import org.eclipse.sumo.libtraci.Simulation;
-import org.eclipse.sumo.libtraci.TraCIColor;
-import org.eclipse.sumo.libtraci.TraCIPosition;
-import org.eclipse.sumo.libtraci.TrafficLight;
-import org.eclipse.sumo.libtraci.Vehicle;
+import org.eclipse.sumo.libtraci.*;
 
 public class SumoWrapper {
     private final static Logger WrapperLogger = Logger.getLogger(SumoWrapper.class.getName());
@@ -192,6 +184,9 @@ public class SumoWrapper {
     public double get_Trafficlight_remaining_phaseduration(String id){
         return TrafficLight.getNextSwitch(id)-Simulation.getTime();
     }
+    public List<String> getTrafficlightControlledLanes(String TrafficlightID){
+        return TrafficLight.getControlledLanes(TrafficlightID);
+    }
     public void set_TrafficLightState(String id,String state){
         TrafficLight.setRedYellowGreenState(id,state);
     }
@@ -200,6 +195,12 @@ public class SumoWrapper {
     }
     public void set_TrafficLightProgramm(String trafficLightID,String programm){
         TrafficLight.setProgram(trafficLightID,programm);
+    }
+    public TraCILogicVector getTrafficLightLogic(String trafficlightID){
+        return TrafficLight.getCompleteRedYellowGreenDefinition(trafficlightID);
+    }
+    public void setTrafficLightLogic(String trafficlightID,TraCILogic logic){
+        TrafficLight.setCompleteRedYellowGreenDefinition(trafficlightID,logic);
     }
 
     public boolean existsEdge(String edgeID) {
@@ -222,6 +223,9 @@ public class SumoWrapper {
     }
     public List<String> get_RouteIDList(){
         return new ArrayList<>(Route.getIDList());
+    }
+    public boolean existsLane(String LaneID){
+        return Lane.getIDList().contains(LaneID);
     }
 
     public List<String> get_customRouteIDList() {

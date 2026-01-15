@@ -10,12 +10,16 @@ import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseWheelEvent;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import javax.swing.JPanel;
 
+import SimulationObjects.SimEdge;
+import SimulationObjects.SimLane;
 import SimulationObjects.SimTrafficlight;
 import SimulationObjects.SimVehicle;
 import SimulationWrapper.Position;
+import SimulationWrapper.RenderSnapshot;
 
 /**
  * MapPanel is a JPanel that visualizes vehicles in the SUMO simulation.
@@ -25,6 +29,7 @@ public class MapPanel extends JPanel {
     //test//
     private Collection<SimVehicle> vehicles = Collections.emptyList();
     private Collection<SimTrafficlight> trafficLights = Collections.emptyList();
+    private Collection<SimEdge> edges = Collections.emptyList();
 
     // test //   
     private double zoom = 1.0;
@@ -96,11 +101,13 @@ public class MapPanel extends JPanel {
         if (zoom > 5.0) zoom = 5.0;
         repaint();
     }
+    public void initiateMap(Collection<SimEdge> edges){
+        this.edges=edges;
+    }
+    public void updateFromSimulation(RenderSnapshot snapshot) {
 
-    public void updateFromSimulation(Collection<SimVehicle> allVehicles,
-                                     Collection<SimTrafficlight> allTls) {
-        vehicles = (allVehicles != null) ? allVehicles : Collections.emptyList();
-        trafficLights = (allTls != null) ? allTls : Collections.emptyList();
+        vehicles = (snapshot.vehicles() != null) ? snapshot.vehicles() : Collections.emptyList();
+        trafficLights = (snapshot.lights() != null) ? snapshot.lights() : Collections.emptyList();
         repaint();
     }
 
@@ -108,11 +115,7 @@ public class MapPanel extends JPanel {
      * Updates vehicle positions from the SUMO simulation.
      * Distinguishes between normal vehicles and special vehicles based on ID prefix.
      */
-    public void updateFromSimulation(Collection<SimVehicle> allVehicles) {
-        //vehicles=allVehicles;
-        //repaint();
-        updateFromSimulation(allVehicles, trafficLights);
-    }
+
 
     /**
      * Paints the panel with the current vehicle positions.
@@ -133,10 +136,15 @@ public class MapPanel extends JPanel {
         g2.translate(offsetX, offsetY + getHeight()); // translate down
         g2.scale(zoom, -zoom); // invert Y-axis to match SUMO coordinates
 
+        paintEdges(g2);
+
         // Draw vehicles
 
         for (SimVehicle v : vehicles) {
             Position p = v.getPosition();
+            if(p==null){
+                continue;
+            }
 
             // Draw special vehicles
             if(v.isSpecial()){
@@ -164,6 +172,23 @@ public class MapPanel extends JPanel {
     }
 
 
+    }
+    private void paintEdges(Graphics g2){
+        g2.setColor(Color.GRAY);
+
+        for (SimEdge edge : edges) {
+            for (SimLane lane : edge.getLanes()) {
+                List<Position> pts = lane.getShape();
+                for (int i = 0; i < pts.size() - 1; i++) {
+                    Position a = pts.get(i);
+                    Position b = pts.get(i + 1);
+                    g2.drawLine(
+                            (int)a.getX(), (int)a.getY(),
+                            (int)b.getX(), (int)b.getY()
+                    );
+                }
+            }
+        }
     }
     //TODO roadnetwork rendering
 }
