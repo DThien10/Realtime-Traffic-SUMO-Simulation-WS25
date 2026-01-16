@@ -7,9 +7,10 @@ import org.eclipse.sumo.libtraci.TraCIColor;
 import java.awt.*;
 
 public class SimVehicle extends SimObject{
-//TODO add a color class
+
     private Position position;
     private Color color;
+    private double speed;
     private final boolean special;
 
     public SimVehicle(String id, SumoWrapper wrapper){
@@ -26,6 +27,7 @@ public class SimVehicle extends SimObject{
 
     public void update(){
         position=wrapper.get_VehiclePos(id);
+        speed= wrapper.get_VehicleSpeed(id);
     }
 
     public Position getPosition(){

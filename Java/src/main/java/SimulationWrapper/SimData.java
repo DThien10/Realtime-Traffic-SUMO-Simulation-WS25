@@ -114,6 +114,16 @@ public class SimData {
 
 //TODO start working on filtering methods
 
+    public Set<SimVehicle> filterVehicles(double speedThreshhold){
+        Set<SimVehicle> result=new HashSet<>();
+        for(SimVehicle vehicle:vehicles.values()){
+            if(vehicle.getSpeed()>= speedThreshhold){
+                result.add(vehicle);
+            }
+        }
+
+        return result;
+    }
 
 }
 

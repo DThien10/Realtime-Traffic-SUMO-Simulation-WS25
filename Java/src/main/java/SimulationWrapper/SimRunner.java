@@ -1,11 +1,13 @@
 package SimulationWrapper;
 
 import java.text.DecimalFormat;
+import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import SimulationObjects.SimVehicle;
 import org.eclipse.sumo.libtraci.Simulation;
 
 import GUI.MapPanel;
@@ -49,7 +51,7 @@ public class SimRunner {
         wrapper.start();
 
         data.initiate(netPath);
-        mapPanel.initiateMap(data.getEdgesSet());
+        mapPanel.setEdges(data.getEdgesSet());
 
     }
     public void pause(){
@@ -77,7 +79,6 @@ public class SimRunner {
             data.update();
             updateMap();
 
-            System.out.println(wrapper.get_Vehiclecolor(wrapper.getVehicleIDs().getFirst()));
 /*
             //Edge average test
             if(testcounter%100==0) {
@@ -185,6 +186,6 @@ public class SimRunner {
             default -> throw new IllegalStateException("Unexpected value: " + TRAFFIC_LIGHT_STATUS);
         };
     }
-    //TODO make a clear function to delete all current cars in the simulation
+    //TODO make a clear() function to delete all current cars in the simulation
     //TODO be able to restart simulation
 }

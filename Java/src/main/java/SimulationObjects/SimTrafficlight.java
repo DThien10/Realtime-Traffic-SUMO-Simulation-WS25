@@ -10,7 +10,7 @@ public class SimTrafficlight extends SimObject{
 //TODO add phase duration for map rendering
     private String state;
     private String originalState;
-    private final TraCILogicVector originalProgramm;
+    private final String originalProgramm;
 
     private Position position; // TEST TRAFFIC LIGHT
 
@@ -18,7 +18,7 @@ public class SimTrafficlight extends SimObject{
         super(id, wrapper);
         state = wrapper.get_Trafficstate(id);
         originalState=state;
-        originalProgramm=wrapper.getTrafficLightLogic(id);
+        originalProgramm=wrapper.get_TrafficLightProgramm(id);
        // System.out.println("Trafficlight logic: "+ originalProgramm.getFirst());
 
         // TEST TRAFFIC LIGHT
@@ -95,7 +95,7 @@ public class SimTrafficlight extends SimObject{
         System.out.println(state+" : old state");
         state= originalState;
         wrapper.set_TrafficLightState(id,state);
-        wrapper.setTrafficLightLogic(id, originalProgramm.getFirst()); // TEST TRAFFIC LIGHT
+        wrapper.set_TrafficLightProgramm(id, originalProgramm); // TEST TRAFFIC LIGHT
         System.out.println(originalProgramm+" : program running");
     }
 
