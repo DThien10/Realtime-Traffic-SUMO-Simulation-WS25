@@ -109,7 +109,7 @@ public class SumoWrapper {
 
     }
 
-    public double time(){
+    public double getTime(){
         return Simulation.getTime();
     }
 

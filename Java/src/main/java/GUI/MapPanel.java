@@ -11,6 +11,7 @@ import java.util.List;
 
 import javax.swing.JPanel;
 
+import Filters.VehicleFilter;
 import SimulationObjects.SimEdge;
 import SimulationObjects.SimLane;
 import SimulationObjects.SimTrafficlight;
@@ -27,6 +28,7 @@ public class MapPanel extends JPanel {
     private Collection<SimVehicle> vehicles = Collections.emptyList();
     private Collection<SimTrafficlight> trafficLights = Collections.emptyList();
     private Collection<SimEdge> edges = Collections.emptyList();
+
 
     // test //   
     private double zoom = 1.0;
@@ -104,7 +106,7 @@ public class MapPanel extends JPanel {
     public void updateFromSimulation(RenderSnapshot snapshot) {
 
         vehicles = (snapshot.vehicles() != null) ? snapshot.vehicles() : Collections.emptyList();
-        trafficLights = (snapshot.lights() != null) ? snapshot.lights() : Collections.emptyList();
+        trafficLights = (snapshot.trafficLights() != null) ? snapshot.trafficLights() : Collections.emptyList();
         repaint();
     }
 
@@ -141,14 +143,19 @@ public class MapPanel extends JPanel {
 
         // Draw vehicles
 
+
+
+
         for (SimVehicle v : vehicles) {
+
+
             Position p = v.getPosition();
             if(p==null){
                 continue;
             }
 
             // Draw special vehicles
-            if(v.isSpecial()){
+            if(v.isUserGenerated()){
                 g2.setColor(Color.YELLOW);
                 g2.fillOval((int)p.getX() - 5, (int)p.getY() - 5, 10, 10);
             }else {

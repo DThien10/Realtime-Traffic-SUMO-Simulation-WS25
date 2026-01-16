@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import Filters.VehicleFilter;
 import SimulationObjects.SimEdge;
 import SimulationObjects.SimTrafficlight;
 import SimulationObjects.SimVehicle;
@@ -32,6 +33,9 @@ public class SimData {
     private Set<SimEdge> edges;
 
 
+    private VehicleFilter vehicleFilterForRendering=new VehicleFilter();
+
+
 
     //getter/setter/updater methods
     public  Collection<SimVehicle> get_allVehicles(){return Collections.unmodifiableCollection(vehicles.values());}
@@ -47,7 +51,8 @@ public class SimData {
         }
     }
     public RenderSnapshot getSimulationSnapshot(){
-        return new RenderSnapshot(vehicles.values().stream().collect(Collectors.toUnmodifiableSet()), trafficlights);
+        java.util.Collection<SimVehicle> filteredVehicles =get_allVehicles().stream().filter(vehicleFilterForRendering::check).collect(Collectors.toUnmodifiableSet());
+        return new RenderSnapshot(filteredVehicles, trafficlights);
     }
     public void initiateEdges(String netPath){
         NetworkReader networkReader=new NetworkReader(netPath,wrapper);
@@ -97,7 +102,7 @@ public class SimData {
 
     }
     public Collection<SimVehicle> get_SimVehicles(){
-        return vehicles.values();
+        return vehicles.values().stream().collect(Collectors.toUnmodifiableSet());
     }
 
     public void update(){
@@ -112,18 +117,15 @@ public class SimData {
 
     }
 
-//TODO start working on filtering methods
-
-    public Set<SimVehicle> filterVehicles(double speedThreshhold){
-        Set<SimVehicle> result=new HashSet<>();
-        for(SimVehicle vehicle:vehicles.values()){
-            if(vehicle.getSpeed()>= speedThreshhold){
-                result.add(vehicle);
-            }
-        }
-
-        return result;
+    public VehicleFilter getVehicleFilterForRendering() {
+        return vehicleFilterForRendering;
     }
+    public void setVehicleFilterForRenderingminimum(double minSpeed){
+        vehicleFilterForRendering.setMinSpeed(minSpeed);
+    }
+
+    //TODO start working on filtering methods
+
 
 }
 
