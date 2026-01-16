@@ -6,6 +6,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import Filters.VehicleFilter;
 import org.eclipse.sumo.libtraci.Simulation;
 
 import GUI.MapPanel;
@@ -22,11 +23,10 @@ public class SimRunner {
 
     String configPath;
     String netPath;
-    SumoWrapper wrapper; // cầu nối TraCI với SUMO
-    SimData data ; //chứa và quản lí các đối tượng mô phỏng
-
+    SumoWrapper wrapper;
+    SimData data ;
     // Panel used to draw the map
-    private final MapPanel mapPanel; // bắn dữ liệu mô phỏng lên GUI
+    private final MapPanel mapPanel;
     DecimalFormat cutoffdecimals = new DecimalFormat("#.00");
 
     private final static Logger SimRunLogger = Logger.getLogger(SimRunner.class.getName());
@@ -55,7 +55,7 @@ public class SimRunner {
 
     }
     //pauses the simulation run
-    public void pause(){ 
+    public void pause(){
         pause=true;
     }
     //unpauses the simulation run
@@ -111,7 +111,7 @@ public class SimRunner {
         String newID;
         String random_route;
         List<String> all_routes = data.get_customRoutes();
-        Random random_number = new Random((long) Simulation.getTime());
+        Random random_number = new Random((long) wrapper.getTime());
         int random;
         int all_route_length = all_routes.size();
         int addition_counter=0;
@@ -172,7 +172,7 @@ public class SimRunner {
         }
     }
     public double getSimulationTime(){
-        return wrapper.time();
+        return wrapper.getTime();
     }
     public int getVehicleCount(){
         return wrapper.get_VehicleCount();
@@ -187,6 +187,10 @@ public class SimRunner {
             case ALL_GREEN -> "All Green";
             default -> throw new IllegalStateException("Unexpected value: " + TRAFFIC_LIGHT_STATUS);
         };
+    }
+
+    public void setVehicleFilterForRenderingminimum(double minSpeed){
+        data.setVehicleFilterForRenderingminimum(minSpeed);
     }
     //TODO make a clear() function to delete all current cars in the simulation
     //TODO be able to restart simulation

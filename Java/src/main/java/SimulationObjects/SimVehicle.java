@@ -11,13 +11,13 @@ public class SimVehicle extends SimObject{
     private Position position;
     private Color color;
     private double speed;
-    private final boolean special;
+    private final boolean userGenerated;
 
     public SimVehicle(String id, SumoWrapper wrapper){
         super(id,wrapper);
         TraCIColor traCIColor= wrapper.get_Vehiclecolor(id);
         color=new Color(traCIColor.getR(),traCIColor.getG(),traCIColor.getB());
-        special= id.startsWith("Random_add");
+        userGenerated = id.startsWith("Random_add");
     }
 
     @Override
@@ -38,8 +38,8 @@ public class SimVehicle extends SimObject{
         return wrapper.get_VehicleSpeed(id);
     }
 
-    public boolean isSpecial(){
-        return special;
+    public boolean isUserGenerated(){
+        return userGenerated;
     }
     public Color getColor(){return color;}
 }

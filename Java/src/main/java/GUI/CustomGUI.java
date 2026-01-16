@@ -39,6 +39,7 @@ public class CustomGUI extends JFrame {
     // ===== CONTROL FLAGS =====
     private boolean paused = false;
     private int stepDelayMs = 0;
+    private double minSpeedFilter=0;
 
     // ===== LOG AREA =====
     private final JTextArea logArea = new JTextArea();
@@ -110,6 +111,8 @@ public class CustomGUI extends JFrame {
         panel.add(Box.createVerticalStrut(10));
         panel.add(createSpeedControl());
         panel.add(Box.createVerticalStrut(10));
+        panel.add(createFilterControl());
+        panel.add(Box.createVerticalStrut(10));
         panel.add(createInjectControl());
         panel.add(Box.createVerticalStrut(10));
         panel.add(createTLSControl());
@@ -159,7 +162,7 @@ public class CustomGUI extends JFrame {
      */
     private JPanel createSpeedControl() {
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBorder(new TitledBorder("Speed"));
+        panel.setBorder(new TitledBorder("Simulation speed"));
 
         JSlider speedSlider = new JSlider(0, 500, stepDelayMs);
         JLabel label = new JLabel("Delay: " + stepDelayMs + " ms");
@@ -172,6 +175,23 @@ public class CustomGUI extends JFrame {
 
         panel.add(label, BorderLayout.NORTH);
         panel.add(speedSlider, BorderLayout.CENTER);
+        return panel;
+    }
+    private JPanel createFilterControl() {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBorder(new TitledBorder("Speed Filter"));
+
+        JSlider filterSlider = new JSlider(0, 20, (int) minSpeedFilter);
+        JLabel label = new JLabel("Minimum speed: " + minSpeedFilter + " km/h");
+
+        filterSlider.addChangeListener(e -> {
+            minSpeedFilter = filterSlider.getValue();
+            controller.setVehicleFilterForRenderingminimum(minSpeedFilter);
+            label.setText("Min speed: " + minSpeedFilter + " km/h");
+        });
+
+        panel.add(label, BorderLayout.NORTH);
+        panel.add(filterSlider, BorderLayout.CENTER);
         return panel;
     }
 
