@@ -1,5 +1,6 @@
 package SimulationWrapper;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -7,10 +8,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import SimulationObjects.SimEdge;
 import SimulationObjects.SimTrafficlight;
 import SimulationObjects.SimVehicle;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
 
 public class SimData {
     private final SumoWrapper wrapper;
@@ -24,7 +29,7 @@ public class SimData {
     private final Set<String> added_Vehicles=new HashSet<>();
     private  List<String> custom_Routes;
     private final Set<SimTrafficlight> trafficlights= new HashSet<>();
-    private final Set<SimEdge> edges = new HashSet<>();
+    private Set<SimEdge> edges;
 
 
 
@@ -33,12 +38,24 @@ public class SimData {
     public  Set<String> get_addedVehicles(){return Collections.unmodifiableSet(added_Vehicles);}
     public  List<String> get_customRoutes(){return custom_Routes;}
     public Set<SimTrafficlight> getTrafficlightsSet(){return Collections.unmodifiableSet(trafficlights);}
-    public Set<SimEdge> getEdgesSet(){return Collections.unmodifiableSet(edges);}
+    public Set<SimEdge> getEdgesSet(){return edges;}
     public void initiateEdges(){
         List<String> allEdgesIDs = wrapper.get_EdgeIDList();
 
         for(String id:allEdgesIDs){
             edges.add(new SimEdge(id,wrapper));
+        }
+    }
+    public RenderSnapshot getSimulationSnapshot(){
+        return new RenderSnapshot(vehicles.values().stream().collect(Collectors.toUnmodifiableSet()), trafficlights);
+    }
+    public void initiateEdges(String netPath){
+        NetworkReader networkReader=new NetworkReader(netPath,wrapper);
+        try {
+            edges=networkReader.readEdgeData();
+        } catch (ParserConfigurationException | IOException | SAXException e) {
+            throw new RuntimeException(e);
+
         }
     }
     public void initiate_trafficlights() {
@@ -73,10 +90,10 @@ public class SimData {
     }
     public  void UpdateAdded_Vehicles(String newEntry){added_Vehicles.add(newEntry);}
     public  void setCustom_Routes(){custom_Routes=wrapper.get_customRouteIDList();}
-    public void initiate(){
+    public void initiate(String netPath){
         setCustom_Routes();
         initiate_trafficlights();
-        initiateEdges();
+        initiateEdges(netPath);
 
     }
     public Collection<SimVehicle> get_SimVehicles(){
@@ -97,6 +114,16 @@ public class SimData {
 
 //TODO start working on filtering methods
 
+    public Set<SimVehicle> filterVehicles(double speedThreshhold){
+        Set<SimVehicle> result=new HashSet<>();
+        for(SimVehicle vehicle:vehicles.values()){
+            if(vehicle.getSpeed()>= speedThreshhold){
+                result.add(vehicle);
+            }
+        }
+
+        return result;
+    }
 
 }
 

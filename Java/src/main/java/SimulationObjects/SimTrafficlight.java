@@ -2,6 +2,9 @@ package SimulationObjects;
 
 import SimulationWrapper.Position;
 import SimulationWrapper.SumoWrapper;// TEST TRAFFIC LIGHT
+import org.eclipse.sumo.libtraci.TraCILogicVector;
+
+import java.util.List;
 
 public class SimTrafficlight extends SimObject{
 //TODO add phase duration for map rendering
@@ -16,6 +19,7 @@ public class SimTrafficlight extends SimObject{
         state = wrapper.get_Trafficstate(id);
         originalState=state;
         originalProgramm=wrapper.get_TrafficLightProgramm(id);
+       // System.out.println("Trafficlight logic: "+ originalProgramm.getFirst());
 
         // TEST TRAFFIC LIGHT
         try {
@@ -47,15 +51,18 @@ public class SimTrafficlight extends SimObject{
         return state;
     }
 
-    public int getPhase(String id){
+    public int getPhase(){
         return wrapper.get_TrafficlightPhase(this.id);
     }
 
-    public double get_phaseduration(String id){
+    public double get_phaseduration(){
         return wrapper.get_Trafficlight_phaseduration(this.id);
     }
-    public double get_remaining_phaseduration(String id) {
+    public double get_remaining_phaseduration() {
         return wrapper.get_Trafficlight_remaining_phaseduration(id);
+    }
+    public List<String> getControlledLanes(){
+        return wrapper.getTrafficlightControlledLanes(id);
     }
 
 
@@ -88,7 +95,6 @@ public class SimTrafficlight extends SimObject{
         System.out.println(state+" : old state");
         state= originalState;
         wrapper.set_TrafficLightState(id,state);
-        //wrapper.set_TrafficLightProgramm(id,"0");
         wrapper.set_TrafficLightProgramm(id, originalProgramm); // TEST TRAFFIC LIGHT
         System.out.println(originalProgramm+" : program running");
     }
