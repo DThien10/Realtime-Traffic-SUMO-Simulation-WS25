@@ -27,6 +27,7 @@ public class SimRunner {
     SimData data ;
     // Panel used to draw the map
     private final MapPanel mapPanel;
+    private final VehicleFilter vehicleFilterForRendering = new VehicleFilter();
     DecimalFormat cutoffdecimals = new DecimalFormat("#.00");
 
     private final static Logger SimRunLogger = Logger.getLogger(SimRunner.class.getName());
@@ -189,8 +190,26 @@ public class SimRunner {
         };
     }
 
-    public void setVehicleFilterForRenderingminimum(double minSpeed){
-        data.setVehicleFilterForRenderingminimum(minSpeed);
+    public void setVehicleFilterForRenderingMinimum(double minSpeed){
+        vehicleFilterForRendering.setMinSpeed(minSpeed);
+        mapPanel.setVehicleFilterForRendering(vehicleFilterForRendering);
+    }
+
+    public void setVehicleFilterForRenderingMaximum(double maxSpeed) {
+        vehicleFilterForRendering.setMaxSpeed(maxSpeed);
+        mapPanel.setVehicleFilterForRendering(vehicleFilterForRendering);
+    }
+    public void setVehicleFilterForRenderingIsUserGenerated(boolean isUserGenerated) {
+        vehicleFilterForRendering.setCheckForUserGenerated(isUserGenerated);
+        mapPanel.setVehicleFilterForRendering(vehicleFilterForRendering);
+    }
+
+    public void toggleVehicleFilterForRenderingIsUserGenerated(){
+        if(vehicleFilterForRendering.getCheckForUserGenerated()){
+            setVehicleFilterForRenderingIsUserGenerated(false);
+        }else{
+            setVehicleFilterForRenderingIsUserGenerated(true);
+        }
     }
     //TODO make a clear() function to delete all current cars in the simulation
     //TODO be able to restart simulation

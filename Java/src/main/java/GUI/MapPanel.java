@@ -13,11 +13,13 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.Map;
 import java.util.Set;
 
 import javax.swing.JPanel;
 
+import Filters.VehicleFilter;
 import SimulationObjects.SimEdge;
 import SimulationObjects.SimLane;
 import SimulationObjects.SimTrafficlight;
@@ -34,6 +36,9 @@ public class MapPanel extends JPanel {
     private Collection<SimVehicle> vehicles = Collections.emptyList();
     private Collection<SimTrafficlight> trafficLights = Collections.emptyList();
     private Collection<SimEdge> edges = Collections.emptyList();
+
+    private VehicleFilter vehicleFilterForRendering=new VehicleFilter();
+
 
     // test //   
     private double zoom = 1.0;
@@ -140,7 +145,7 @@ public class MapPanel extends JPanel {
 
     public void updateFromSimulation(RenderSnapshot snapshot) {
 
-        vehicles = (snapshot.vehicles() != null) ? snapshot.vehicles() : Collections.emptyList();
+        vehicles = (snapshot.vehicles() != null) ? snapshot.vehicles().stream().filter(vehicleFilterForRendering::check).collect(Collectors.toUnmodifiableSet()) : Collections.emptyList();
         trafficLights = (snapshot.trafficLights() != null) ? snapshot.trafficLights() : Collections.emptyList();
         repaint();
     }
@@ -510,4 +515,11 @@ public class MapPanel extends JPanel {
     }
 
 
+    public VehicleFilter getVehicleFilterForRendering() {
+        return vehicleFilterForRendering;
+    }
+
+    public void setVehicleFilterForRendering(VehicleFilter vehicleFilterForRendering) {
+        this.vehicleFilterForRendering = vehicleFilterForRendering;
+    }
 }

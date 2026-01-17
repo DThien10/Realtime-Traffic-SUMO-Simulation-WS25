@@ -2,24 +2,10 @@ package GUI;
 
 import SimulationWrapper.SimRunner;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
+import java.awt.*;
 import java.text.DecimalFormat;
 
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSlider;
-import javax.swing.JSpinner;
-import javax.swing.JTextArea;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.Timer;
+import javax.swing.*;
 import javax.swing.border.TitledBorder;
 
 /**
@@ -40,6 +26,8 @@ public class CustomGUI extends JFrame {
     private boolean paused = false;
     private int stepDelayMs = 0;
     private double minSpeedFilter=0;
+    private double maxSpeedFilter=100;
+    private Boolean isUserGeneratedFilter=null;
 
     // ===== LOG AREA =====
     private final JTextArea logArea = new JTextArea();
@@ -109,7 +97,7 @@ public class CustomGUI extends JFrame {
 
         panel.add(createSimulationControl());
         panel.add(Box.createVerticalStrut(10));
-        panel.add(createSpeedControl());
+        panel.add(createSimulationSpeedControl());
         panel.add(Box.createVerticalStrut(10));
         panel.add(createFilterControl());
         panel.add(Box.createVerticalStrut(10));
@@ -160,7 +148,7 @@ public class CustomGUI extends JFrame {
      *
      * @return a JPanel for speed adjustment
      */
-    private JPanel createSpeedControl() {
+    private JPanel createSimulationSpeedControl() {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBorder(new TitledBorder("Simulation speed"));
 
@@ -178,21 +166,65 @@ public class CustomGUI extends JFrame {
         return panel;
     }
     private JPanel createFilterControl() {
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.setBorder(new TitledBorder("Speed Filter"));
+        JPanel parentPanel = new JPanel();
+        parentPanel.setLayout(new BorderLayout());
 
-        JSlider filterSlider = new JSlider(0, 20, (int) minSpeedFilter);
-        JLabel label = new JLabel("Minimum speed: " + minSpeedFilter + " km/h");
 
-        filterSlider.addChangeListener(e -> {
-            minSpeedFilter = filterSlider.getValue();
-            controller.setVehicleFilterForRenderingminimum(minSpeedFilter);
-            label.setText("Min speed: " + minSpeedFilter + " km/h");
+
+
+        parentPanel.setBorder(new TitledBorder("Speed Filter"));
+
+        JPanel column1 = new JPanel();
+        column1.setLayout(new BorderLayout());
+        Dimension sliderSize = new Dimension(140, 40);
+
+
+
+
+        JSlider filterSliderMinimum = new JSlider(0, 200, 10*(int) minSpeedFilter);
+        filterSliderMinimum.setPreferredSize(sliderSize);
+        JLabel labelMin = new JLabel("Min speed: " + minSpeedFilter*2 + " km/h");
+
+        filterSliderMinimum.addChangeListener(e -> {
+            minSpeedFilter = (double) filterSliderMinimum.getValue() /10;
+            controller.setVehicleFilterForRenderingMinimum(minSpeedFilter);
+            labelMin.setText("Min speed: " + minSpeedFilter*2 + " km/h");
+        });
+        column1.add(labelMin,BorderLayout.NORTH);
+        column1.add(filterSliderMinimum,BorderLayout.CENTER);
+
+        JPanel column2 = new JPanel();
+        column2.setLayout(new BorderLayout());
+
+        JSlider filterSliderMaximum = new JSlider(0, 200, 200);
+        filterSliderMaximum.setPreferredSize(sliderSize);
+
+        JLabel labelMax = new JLabel("Max speed: " + maxSpeedFilter*2 + " km/h");
+
+        filterSliderMaximum.addChangeListener(e -> {
+            maxSpeedFilter = (double) filterSliderMaximum.getValue() /10;
+            controller.setVehicleFilterForRenderingMaximum(maxSpeedFilter);
+            labelMax.setText("Max speed: " + maxSpeedFilter*2 + " km/h");
         });
 
-        panel.add(label, BorderLayout.NORTH);
-        panel.add(filterSlider, BorderLayout.CENTER);
-        return panel;
+        JCheckBox filterForUserGeneratedVehicles=new JCheckBox("Show only user generated cars");
+
+        filterForUserGeneratedVehicles.addActionListener(e -> {
+            controller.toggleVehicleFilterForRenderingIsUserGenerated();
+        });
+
+        column2.add(labelMax,BorderLayout.NORTH);
+        column2.add(filterSliderMaximum,BorderLayout.CENTER);
+
+        parentPanel.add(column1,BorderLayout.WEST);
+        parentPanel.add(column2,BorderLayout.EAST);
+        parentPanel.add(filterForUserGeneratedVehicles,BorderLayout.SOUTH);
+
+
+
+
+
+        return parentPanel;
     }
 
     /**
