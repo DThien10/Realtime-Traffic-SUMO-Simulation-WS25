@@ -1,10 +1,9 @@
 package SimulationObjects;
 
-import SimulationWrapper.Position;
-import SimulationWrapper.SumoWrapper;// TEST TRAFFIC LIGHT
-import org.eclipse.sumo.libtraci.TraCILogicVector;
-
 import java.util.List;
+import java.util.Map;
+
+import SimulationWrapper.SumoWrapper;
 
 public class SimTrafficlight extends SimObject{
 //TODO add phase duration for map rendering
@@ -12,33 +11,38 @@ public class SimTrafficlight extends SimObject{
     private String originalState;
     private final String originalProgramm;
 
-    private Position position; // TEST TRAFFIC LIGHT
+    // TEST TRAFFIC LIGHT
+    private int phase;
+    private double phaseDuration;
+    private double remainingPhaseDuration;
+    // TEST TRAFFIC LIGHT
+
+
 
     public SimTrafficlight(String id, SumoWrapper wrapper){
         super(id, wrapper);
         state = wrapper.get_Trafficstate(id);
         originalState=state;
         originalProgramm=wrapper.get_TrafficLightProgramm(id);
-       // System.out.println("Trafficlight logic: "+ originalProgramm.getFirst());
-
-        // TEST TRAFFIC LIGHT
-        try {
-            position = wrapper.get_TrafficLightPosition(id);
-        } catch (Exception e) {
-            position = null;
-        }
-        // TEST TRAFFIC LIGHT
-    }
-
-    // TEST TRAFFIC LIGHT
-    public Position getPosition() {
-        return position;
     }
 
     public void update() {
         state = wrapper.get_Trafficstate(id);
+
+        // TEST TRAFFIC LIGHT
+        phase = wrapper.get_TrafficlightPhase(id);
+        phaseDuration = wrapper.get_Trafficlight_phaseduration(id);
+        remainingPhaseDuration = wrapper.get_Trafficlight_remaining_phaseduration(id);
+
     }
     // TEST TRAFFIC LIGHT
+
+    // lấy map lane-signals cho việc render đèn giao thông
+    public Map<String, Character> getLaneSignals() {
+    return wrapper.getLaneSignalMap(id);
+    // lấy map lane-signals cho việc render đèn giao thông
+}
+
 
 
 
@@ -66,38 +70,29 @@ public class SimTrafficlight extends SimObject{
     }
 
 
-    public void set_red(){
-
-        // Source - https://stackoverflow.com/a
-        // Posted by Sean Patrick Floyd, modified by community. See post 'Timeline' for change history
-        // Retrieved 2026-01-11, License - CC BY-SA 4.0
-
-        System.out.println(state+" : old state");
-        state= "r".repeat(originalState.length());
-        wrapper.set_TrafficLightState(id,state);
-        System.out.println(state+" : new state");
-
-
+    public void set_red() {
+        String cur = wrapper.get_Trafficstate(id);
+        if (cur == null) return;
+        wrapper.set_TrafficLightState(id, "r".repeat(cur.length()));
+        update();
+        System.out.println(id + " -> FULL RED, state=" + state + " phase=" + phase);
     }
 
-    public void set_green(){
-
-
-        System.out.println(state+" : old state");
-        state= "G".repeat(originalState.length());
-        wrapper.set_TrafficLightState(id,state);
-        System.out.println(state+" : new state");
-
-
+    // TEST TRAFFIC LIGHT
+    public void set_green() {
+        String cur = wrapper.get_Trafficstate(id);
+        if (cur == null) return;
+        wrapper.set_TrafficLightState(id, "G".repeat(cur.length()));
+        update();
+        System.out.println(id + " -> FULL GREEN, state=" + state + " phase=" + phase);
     }
 
-    public void set_original(){
-        System.out.println(state+" : old state");
-        state= originalState;
-        wrapper.set_TrafficLightState(id,state);
-        wrapper.set_TrafficLightProgramm(id, originalProgramm); // TEST TRAFFIC LIGHT
-        System.out.println(originalProgramm+" : program running");
+    public void set_original() {
+        // Trả quyền điều khiển lại cho SUMO (auto-phase)
+        wrapper.set_TrafficLightProgramm(id, originalProgramm);
+        update();
+        System.out.println(id + " back to program=" + originalProgramm
+        + " phase=" + phase + " state=" + state);
     }
-
-
+    // TEST TRAFFIC LIGHT
 }

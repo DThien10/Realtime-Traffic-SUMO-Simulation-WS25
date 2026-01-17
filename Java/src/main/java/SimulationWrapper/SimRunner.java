@@ -1,13 +1,11 @@
 package SimulationWrapper;
 
 import java.text.DecimalFormat;
-import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import SimulationObjects.SimVehicle;
 import org.eclipse.sumo.libtraci.Simulation;
 
 import GUI.MapPanel;
@@ -24,10 +22,11 @@ public class SimRunner {
 
     String configPath;
     String netPath;
-    SumoWrapper wrapper;
-    SimData data ;
+    SumoWrapper wrapper; // cầu nối TraCI với SUMO
+    SimData data ; //chứa và quản lí các đối tượng mô phỏng
+
     // Panel used to draw the map
-    private final MapPanel mapPanel;
+    private final MapPanel mapPanel; // bắn dữ liệu mô phỏng lên GUI
     DecimalFormat cutoffdecimals = new DecimalFormat("#.00");
 
     private final static Logger SimRunLogger = Logger.getLogger(SimRunner.class.getName());
@@ -48,15 +47,18 @@ public class SimRunner {
     }
 //TODO add gui initialization to start() instead of main method
     public void start() throws InterruptedException {
-        wrapper.start();
 
-        data.initiate(netPath);
-        mapPanel.setEdges(data.getEdgesSet());
+        wrapper.start(); // khởi động SUMO và kết nối TraCI
+
+        data.initiate(netPath); // load network (edges/ lanes shapes)
+        mapPanel.setEdges(data.getEdgesSet()); //đưa edges sáng GUI vẽ bản đồ
 
     }
-    public void pause(){
+    //pauses the simulation run
+    public void pause(){ 
         pause=true;
     }
+    //unpauses the simulation run
     public void unpause(){
         pause=false;
     }

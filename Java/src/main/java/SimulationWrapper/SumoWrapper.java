@@ -2,11 +2,23 @@ package SimulationWrapper;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.logging.Logger;
 
-import org.eclipse.sumo.libtraci.*;
+import org.eclipse.sumo.libtraci.Edge;
+import org.eclipse.sumo.libtraci.IntStringPair;
+import org.eclipse.sumo.libtraci.Lane;
+import org.eclipse.sumo.libtraci.Route;
+import org.eclipse.sumo.libtraci.Simulation;
+import org.eclipse.sumo.libtraci.TraCIColor;
+import org.eclipse.sumo.libtraci.TraCILogic;
+import org.eclipse.sumo.libtraci.TraCILogicVector;
+import org.eclipse.sumo.libtraci.TraCIPosition;
+import org.eclipse.sumo.libtraci.TrafficLight;
+import org.eclipse.sumo.libtraci.Vehicle;
 
 public class SumoWrapper {
     private final static Logger WrapperLogger = Logger.getLogger(SumoWrapper.class.getName());
@@ -243,12 +255,45 @@ public class SumoWrapper {
 
     public String get_TrafficlightState(){return TrafficLightState;}
 
-    // TEST TRAFFIC LIGHT
-    public Position get_TrafficLightPosition(String trafficLightId) {
-    TraCIPosition p = Junction.getPosition(trafficLightId);
-    return new Position(p.getX(), p.getY());
-    // TEST TRAFFIC LIGHT
+    // đéo thể hiểu gì được
+    public Map<String, Character> getLaneSignalMap(String tlId) {
+    Map<String, Character> laneSig = new HashMap<>();
+
+    String state = TrafficLight.getRedYellowGreenState(tlId);
+    if (state == null || state.isEmpty()) return laneSig;
+
+    List<String> lanes = TrafficLight.getControlledLanes(tlId);
+    if (lanes == null || lanes.isEmpty()) return laneSig;
+
+    int n = Math.min(state.length(), lanes.size());
+    for (int i = 0; i < n; i++) {
+        String laneId = lanes.get(i);
+        if (laneId == null || laneId.isEmpty()) continue;
+
+        char sig = state.charAt(i);
+        laneSig.put(laneId, mergeMostPermissive(laneSig.get(laneId), sig));
+    }
+    return laneSig;
 }
+
+
+
+    private char mergeMostPermissive(Character cur, char next) {
+        if (cur == null) return next;
+        return priority(next) > priority(cur) ? next : cur;
+    }
+
+    private int priority(char c) {
+        c = Character.toLowerCase(c);
+        if (c == 'g') return 3;
+        if (c == 'y') return 2;
+        if (c == 'r') return 1;
+        return 0;
+    }
+
+    // đéo thể hiểu gì được
+
+
 }
 
 
