@@ -6,7 +6,7 @@ public class VehicleFilter implements Filter<SimVehicle>{
 
     private double minSpeed=0;
     private double maxSpeed=1000;
-    private Boolean isUserGenerated=null;
+    private boolean checkForUserGenerated =false;
 
     public VehicleFilter(){
     }
@@ -18,21 +18,21 @@ public class VehicleFilter implements Filter<SimVehicle>{
         this.minSpeed=minSpeed;
         this.maxSpeed=maxSpeed;
     }
-    public VehicleFilter(double minSpeed, double maxSpeed,boolean isUserGenerated){
+    public VehicleFilter(double minSpeed, double maxSpeed,boolean CheckForUserGenerated){
         this.minSpeed=minSpeed;
         this.maxSpeed=maxSpeed;
-        this.isUserGenerated=isUserGenerated;
+        this.checkForUserGenerated = CheckForUserGenerated;
     }
     @Override
     public boolean check(SimVehicle vehicle) {
 
-        boolean result ;
-        if(isUserGenerated!=null){
-           result= checkUserGenerated(vehicle);
-           if(!result){return false;}
+        boolean result=true ;
+        if(checkForUserGenerated){
+            result=checkUserGenerated(vehicle);
         }
-        result=checkSpeed(vehicle);
-
+        if(result) {
+            result = checkSpeed(vehicle);
+        }
         return result;
 
     }
@@ -43,8 +43,7 @@ public class VehicleFilter implements Filter<SimVehicle>{
     }
 
     public boolean checkUserGenerated(SimVehicle vehicle){
-        boolean userGenerated = vehicle.isUserGenerated();
-        return userGenerated==isUserGenerated;
+        return vehicle.isUserGenerated();
     }
 
     public void setMaxSpeed(double maxSpeed) {
@@ -55,7 +54,10 @@ public class VehicleFilter implements Filter<SimVehicle>{
         this.minSpeed = minSpeed;
     }
 
-    public void setUserGenerated(Boolean userGenerated) {
-        isUserGenerated = userGenerated;
+    public void setCheckForUserGenerated(Boolean checkForUserGenerated) {
+        this.checkForUserGenerated = checkForUserGenerated;
+    }
+    public boolean getCheckForUserGenerated(){
+        return checkForUserGenerated;
     }
 }
