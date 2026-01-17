@@ -159,7 +159,7 @@ public class MapPanel extends JPanel {
 
             // Draw special vehicles
             if(v.isUserGenerated()){
-                g2.setColor(Color.YELLOW);
+                g2.setColor(v.getColor());
                 g2.fillOval((int)p.getX() - 5, (int)p.getY() - 5, 10, 10);
             }else {
 

@@ -1,9 +1,9 @@
 package SimulationWrapper;
 
+import java.awt.*;
 import java.text.DecimalFormat;
+import java.util.*;
 import java.util.List;
-import java.util.Random;
-import java.util.Set;
 import java.util.logging.Logger;
 
 import Filters.VehicleFilter;
@@ -80,6 +80,9 @@ public class SimRunner {
 
             data.update();
             updateMap();
+
+
+
 
 /*
             //Edge average test
@@ -209,6 +212,14 @@ public class SimRunner {
         }else{
             setVehicleFilterForRenderingIsUserGenerated(true);
         }
+    }
+    public void setVehicleFilterForRenderingColors(Set<Color> colors){
+        vehicleFilterForRendering.setColors(colors);
+        mapPanel.setVehicleFilterForRendering(vehicleFilterForRendering);
+    }
+    public void setVehicleFilterForRendering_CheckForColors(boolean checkForColors){
+        vehicleFilterForRendering.setCheckForColor(checkForColors);
+        mapPanel.setVehicleFilterForRendering(vehicleFilterForRendering);
     }
     //TODO make a clear() function to delete all current cars in the simulation
     //TODO be able to restart simulation
