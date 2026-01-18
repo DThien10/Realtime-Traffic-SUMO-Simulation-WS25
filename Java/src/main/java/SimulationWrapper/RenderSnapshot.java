@@ -5,6 +5,6 @@ import SimulationObjects.*;
 import java.util.Collection;
 
 
-public record RenderSnapshot(Collection<SimVehicle> vehicles, Collection<SimTrafficlight> lights) {
+public record RenderSnapshot(Collection<SimVehicle> vehicles, Collection<SimTrafficlight> trafficLights) {
 
 }

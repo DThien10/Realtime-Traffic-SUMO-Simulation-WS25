@@ -1,11 +1,6 @@
 package GUI;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
@@ -18,18 +13,19 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.Map;
 import java.util.Set;
 
 import javax.swing.JPanel;
 
+import Filters.VehicleFilter;
 import SimulationObjects.SimEdge;
 import SimulationObjects.SimLane;
 import SimulationObjects.SimTrafficlight;
 import SimulationObjects.SimVehicle;
 import SimulationWrapper.Position;
 import SimulationWrapper.RenderSnapshot;
-//TEST TRƯỚC
 
 /**
  * MapPanel is a JPanel that visualizes vehicles in the SUMO simulation.
@@ -41,7 +37,10 @@ public class MapPanel extends JPanel {
     private Collection<SimTrafficlight> trafficLights = Collections.emptyList();
     private Collection<SimEdge> edges = Collections.emptyList();
 
-    //test//   
+    private VehicleFilter vehicleFilterForRendering=new VehicleFilter();
+
+
+    // test //   
     private double zoom = 1.0;
     private int offsetX = 0;
     private int offsetY = 0;
@@ -146,8 +145,8 @@ public class MapPanel extends JPanel {
 
     public void updateFromSimulation(RenderSnapshot snapshot) {
 
-        vehicles = (snapshot.vehicles() != null) ? snapshot.vehicles() : Collections.emptyList();
-        trafficLights = (snapshot.lights() != null) ? snapshot.lights() : Collections.emptyList();
+        vehicles = (snapshot.vehicles() != null) ? snapshot.vehicles().stream().filter(vehicleFilterForRendering::check).collect(Collectors.toUnmodifiableSet()) : Collections.emptyList();
+        trafficLights = (snapshot.trafficLights() != null) ? snapshot.trafficLights() : Collections.emptyList();
         repaint();
     }
 
@@ -193,7 +192,7 @@ public class MapPanel extends JPanel {
             Position p = v.getPosition();
             if (p == null) continue;
 
-            if (v.isSpecial()) {
+            if (v.isUserGenerated()) {
                 int r = (int)Math.max(1, Math.round(3 * s)); // ~6px
                 g2.setColor(Color.YELLOW);
                 g2.fillOval((int)p.getX() - r, (int)p.getY() - r, 2*r, 2*r);
@@ -414,7 +413,7 @@ public class MapPanel extends JPanel {
         } catch (Exception e) {
             return 0;
         }
-    }    
+    }
 
     private Path2D toPath(List<Position> pts) {
         Path2D p = new Path2D.Double();
@@ -433,7 +432,7 @@ public class MapPanel extends JPanel {
         return p;
     }
 
-    
+
 
 
     // TEST TRƯỚC
@@ -516,4 +515,11 @@ public class MapPanel extends JPanel {
     }
 
 
+    public VehicleFilter getVehicleFilterForRendering() {
+        return vehicleFilterForRendering;
+    }
+
+    public void setVehicleFilterForRendering(VehicleFilter vehicleFilterForRendering) {
+        this.vehicleFilterForRendering = vehicleFilterForRendering;
+    }
 }

@@ -16,8 +16,8 @@ public class APITest {
         //sets path to sumo files according to user directory
         String base = System.getProperty("user.dir");
 
-        String configPath = "C:\\Users\\lenovo\\Documents\\GitHub\\Realtime-Traffic-SUMO-Simulation-WS25\\Java\\src\\main\\resources\\SumoConfig/altstadt.sumocfg";
-        String netPath  = "C:\\Users\\lenovo\\Documents\\GitHub\\Realtime-Traffic-SUMO-Simulation-WS25\\Java\\src\\main\\resources\\SumoConfig/altstadt.net.xml";
+        String configPath = "C:\\Users\\Marko\\Documents\\GitHub\\Realtime-Traffic-SUMO-Simulation-WS25\\Java\\src\\main\\resources\\SumoConfig/altstadt.sumocfg";
+        String netPath  = "C:\\Users\\Marko\\Documents\\GitHub\\Realtime-Traffic-SUMO-Simulation-WS25\\Java\\src\\main\\resources\\SumoConfig/altstadt.net.xml";
 
         MapPanel mapPanel = new MapPanel();
         JFrame frame = new JFrame("SUMO Realtime Map"); // create a frame(window) to hold the map panel

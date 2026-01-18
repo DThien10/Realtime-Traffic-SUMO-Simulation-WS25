@@ -1,25 +1,14 @@
 package GUI;
 
+import Filters.VehicleFilter;
 import SimulationWrapper.SimRunner;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
+import java.awt.*;
 import java.text.DecimalFormat;
+import java.util.HashSet;
+import java.util.Set;
 
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSlider;
-import javax.swing.JSpinner;
-import javax.swing.JTextArea;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.Timer;
+import javax.swing.*;
 import javax.swing.border.TitledBorder;
 
 /**
@@ -39,11 +28,22 @@ public class CustomGUI extends JFrame {
     // ===== CONTROL FLAGS =====
     private boolean paused = false;
     private int stepDelayMs = 0;
+    private double minSpeedFilter=0;
+    private double maxSpeedFilter=100;
+    private boolean isUserGeneratedFilter;
 
     // ===== LOG AREA =====
     private final JTextArea logArea = new JTextArea();
 
     private final DecimalFormat df = new DecimalFormat("#.00");
+
+
+    private JCheckBox yellowBox;
+    private JCheckBox cyanBox;
+    private JCheckBox redBox;
+    private JCheckBox tealBox;
+    private JCheckBox blueBox;
+
 
     /**
      * Constructs the customGUI window and initializes all panels.
@@ -108,7 +108,11 @@ public class CustomGUI extends JFrame {
 
         panel.add(createSimulationControl());
         panel.add(Box.createVerticalStrut(10));
-        panel.add(createSpeedControl());
+        panel.add(createSimulationSpeedControl());
+        panel.add(Box.createVerticalStrut(10));
+        panel.add(createFilterControl());
+        panel.add(Box.createVerticalStrut(10));
+        panel.add(createColorFilterPanel());
         panel.add(Box.createVerticalStrut(10));
         panel.add(createInjectControl());
         panel.add(Box.createVerticalStrut(10));
@@ -157,9 +161,9 @@ public class CustomGUI extends JFrame {
      *
      * @return a JPanel for speed adjustment
      */
-    private JPanel createSpeedControl() {
+    private JPanel createSimulationSpeedControl() {
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBorder(new TitledBorder("Speed"));
+        panel.setBorder(new TitledBorder("Simulation speed"));
 
         JSlider speedSlider = new JSlider(0, 500, stepDelayMs);
         JLabel label = new JLabel("Delay: " + stepDelayMs + " ms");
@@ -174,6 +178,82 @@ public class CustomGUI extends JFrame {
         panel.add(speedSlider, BorderLayout.CENTER);
         return panel;
     }
+    private JPanel createFilterControl() {
+        JPanel parentPanel = new JPanel();
+        parentPanel.setLayout(new BorderLayout());
+
+        parentPanel.setBorder(new TitledBorder("Speed Filter"));
+
+        JPanel column1 = new JPanel();
+        column1.setLayout(new BorderLayout());
+        Dimension sliderSize = new Dimension(140, 40);
+
+
+        JSlider filterSliderMinimum = new JSlider(0, 200, 10*(int) minSpeedFilter);
+        filterSliderMinimum.setPreferredSize(sliderSize);
+        JLabel labelMin = new JLabel("Min speed: " + minSpeedFilter*2 + " km/h");
+
+        filterSliderMinimum.addChangeListener(e -> {
+            minSpeedFilter = (double) filterSliderMinimum.getValue() /10;
+            controller.setVehicleFilterForRenderingMinimum(minSpeedFilter);
+            labelMin.setText("Min speed: " + minSpeedFilter*2 + " km/h");
+        });
+        column1.add(labelMin,BorderLayout.NORTH);
+        column1.add(filterSliderMinimum,BorderLayout.CENTER);
+
+        JPanel column2 = new JPanel();
+        column2.setLayout(new BorderLayout());
+
+        JSlider filterSliderMaximum = new JSlider(0, 200, 200);
+        filterSliderMaximum.setPreferredSize(sliderSize);
+
+        JLabel labelMax = new JLabel("Max speed: " + maxSpeedFilter*2 + " km/h");
+
+        filterSliderMaximum.addChangeListener(e -> {
+            maxSpeedFilter = (double) filterSliderMaximum.getValue() /10;
+            controller.setVehicleFilterForRenderingMaximum(maxSpeedFilter);
+            labelMax.setText("Max speed: " + maxSpeedFilter*2 + " km/h");
+        });
+
+        JCheckBox filterForUserGeneratedVehicles=new JCheckBox("Show only user generated cars");
+
+        filterForUserGeneratedVehicles.addActionListener(e -> {
+            controller.toggleVehicleFilterForRenderingIsUserGenerated();
+        });
+
+        column2.add(labelMax,BorderLayout.NORTH);
+        column2.add(filterSliderMaximum,BorderLayout.CENTER);
+
+        parentPanel.add(column1,BorderLayout.WEST);
+        parentPanel.add(column2,BorderLayout.EAST);
+        parentPanel.add(filterForUserGeneratedVehicles,BorderLayout.SOUTH);
+
+
+
+
+
+        return parentPanel;
+    }
+
+    private JPanel createColorFilterPanel() {
+        JPanel panel = new JPanel(new GridLayout(2,2,5,5));
+        panel.setBorder(new TitledBorder("Filter by Vehicle Color"));
+
+        yellowBox = createColorCheckbox(VehicleFilter.YELLOW,"Yellow");
+        cyanBox = createColorCheckbox(VehicleFilter.CYAN,"Cyan");
+        redBox = createColorCheckbox(VehicleFilter.RED,"Red");
+        tealBox= createColorCheckbox(VehicleFilter.TEAL,"Teal");
+        blueBox = createColorCheckbox(VehicleFilter.BLUE,"Blue");
+
+        panel.add(yellowBox);
+        panel.add(blueBox);
+        panel.add(cyanBox);
+        panel.add(redBox);
+        panel.add(tealBox);
+
+        return panel;
+    }
+
 
     /**
      * Creates the vehicle injection control panel allowing injection of SPECIAL vehicles.
@@ -259,6 +339,44 @@ public class CustomGUI extends JFrame {
             specialLabel.setText("Custom added Vehicles: " + special);
             tlsLabel.setText("TLS: " + tlsState);
         }).start();
+    }
+
+
+    private JCheckBox createColorCheckbox(Color color, String name) {
+        JCheckBox box = new JCheckBox(name, true);
+
+        box.setOpaque(true);
+        box.setBackground(color);
+        box.setForeground(getTextColorForBackground(color));
+        box.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
+
+        box.addActionListener(e -> updateColorFilterFromCheckboxes());
+
+        return box;
+    }
+
+    private Color getTextColorForBackground(Color bg) {
+        int brightness = (bg.getRed() + bg.getGreen() + bg.getBlue()) / 3;
+        if (brightness<=128)return Color.WHITE;
+        else return Color.black;
+    }
+
+
+    public void updateColorFilterFromCheckboxes(){
+        Set<Color> checkedColors=new HashSet<>();
+
+        if(yellowBox.isSelected()) checkedColors.add(VehicleFilter.YELLOW);
+        if(redBox.isSelected()) checkedColors.add(VehicleFilter.RED);
+        if(blueBox.isSelected()) checkedColors.add(VehicleFilter.BLUE);
+        if(cyanBox.isSelected()) checkedColors.add(VehicleFilter.CYAN);
+        if(tealBox.isSelected()) checkedColors.add(VehicleFilter.TEAL);
+
+        boolean allSelected=yellowBox.isSelected()&& redBox.isSelected() &&blueBox.isSelected()&&
+                cyanBox.isSelected()&& tealBox.isSelected();
+
+        controller.setVehicleFilterForRendering_CheckForColors(!allSelected);
+
+        controller.setVehicleFilterForRenderingColors(checkedColors);
     }
 
     /**
