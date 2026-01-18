@@ -42,7 +42,7 @@ public class SumoWrapper {
 
 
         try{
-            ProcessBuilder pb = new ProcessBuilder(openguiYN(),
+            ProcessBuilder pb = new ProcessBuilder("sumo",
                     "-c", configPath,
                     "--remote-port", String.valueOf(port)
             );

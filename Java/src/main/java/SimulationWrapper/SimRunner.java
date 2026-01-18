@@ -87,17 +87,7 @@ public class SimRunner {
             data.update();
             updateMap();
 
-/*
-            //Edge average test
-            if(testcounter%100==0) {
-                for (SimEdge e : data.getEdgesSet()) {
-                    System.out.println(e.getId() + ": Average speed: " + e.getAverageSpeed());
-                    System.out.println(e.getId() + ": Average cars: " + e.getAverageCars());
 
-                }
-            }
-            testcounter++;
-                            */
             try {
                 Thread.sleep(stepDelayMs);
             } catch (InterruptedException e) {

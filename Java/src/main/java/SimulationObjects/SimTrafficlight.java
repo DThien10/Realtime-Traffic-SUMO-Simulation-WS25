@@ -76,7 +76,7 @@ public class SimTrafficlight extends SimObject{
         if (cur == null) return;
         wrapper.set_TrafficLightState(id, "r".repeat(cur.length()));
         update();
-        System.out.println(id + " -> FULL RED, state=" + state + " phase=" + phase);
+
     }
 
     // TEST TRAFFIC LIGHT
@@ -85,15 +85,14 @@ public class SimTrafficlight extends SimObject{
         if (cur == null) return;
         wrapper.set_TrafficLightState(id, "G".repeat(cur.length()));
         update();
-        System.out.println(id + " -> FULL GREEN, state=" + state + " phase=" + phase);
+
     }
 
     public void set_original() {
         // Trả quyền điều khiển lại cho SUMO (auto-phase)
         wrapper.set_TrafficLightProgramm(id, originalProgramm);
         update();
-        System.out.println(id + " back to program=" + originalProgramm
-        + " phase=" + phase + " state=" + state);
+
     }
 
     public String toDisplayString() {

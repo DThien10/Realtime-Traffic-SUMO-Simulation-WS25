@@ -34,7 +34,7 @@ public class NetworkReader {
         Document doc = db.parse(netXMLfile);
 
         NodeList edgeNodes = doc.getElementsByTagName("edge");
-        System.out.println("Document length: "+edgeNodes.getLength());
+
         for (int i = 0; i < edgeNodes.getLength(); i++) {
             Element edgeElement = (Element) edgeNodes.item(i);
 
@@ -55,7 +55,7 @@ public class NetworkReader {
                 }
 
                 edges.add(edge);
-            System.out.println("added: "+edgeId);
+            Logger.getGlobal().info("added Edge: "+edgeId+" via xml file");
             }
 
             return edges;
