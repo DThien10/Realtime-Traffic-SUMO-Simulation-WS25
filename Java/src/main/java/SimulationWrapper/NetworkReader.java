@@ -12,7 +12,9 @@ import org.xml.sax.SAXException;
 import java.io.IOException;
 import java.util.*;
 import java.util.logging.Logger;
-
+/**
+ * Parses the net.xml file for information on the network and passes them to the mapPanel for rendering
+ */
 public class NetworkReader {
 
     private final String netXMLfile;

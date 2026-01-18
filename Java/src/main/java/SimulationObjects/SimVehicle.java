@@ -6,7 +6,9 @@ import SimulationWrapper.SumoWrapper;
 import org.eclipse.sumo.libtraci.TraCIColor;
 
 import java.awt.*;
-
+/**
+ * Object corresponding to Traci.Vehicle holds a cached version of a Vehicle for consistency in rendering and querying
+ */
 public class SimVehicle extends SimObject{
 
     private Position position;

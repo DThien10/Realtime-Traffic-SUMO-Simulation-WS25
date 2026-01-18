@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.Map;
 
 import SimulationWrapper.SumoWrapper;
-
+/**
+ * Object corresponding to Traci.Trafficlight. holds the Phases and states of each Trafficlight and is used to manipulate Trafficlight state
+ */
 public class SimTrafficlight extends SimObject{
 //TODO add phase duration for map rendering
     private String state;

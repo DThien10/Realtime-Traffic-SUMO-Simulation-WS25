@@ -5,7 +5,9 @@ import SimulationWrapper.SumoWrapper;
 
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * Object corresponding to Traci.Lane. Keeps position info for rendering
+ */
 public class SimLane extends SimObject{
 
     List<Position> shape;

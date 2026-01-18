@@ -2,7 +2,9 @@ package SimulationObjects;
 
 import SimulationWrapper.SumoWrapper;
 
-
+/**
+ * abstract class to implement for every Simulation Object
+ */
 public abstract class SimObject {
 
     protected final String id;

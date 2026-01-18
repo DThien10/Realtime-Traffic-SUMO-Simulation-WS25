@@ -7,7 +7,7 @@ import java.io.IOException;
 
 
 //basic connection showcase of sumo using libtraci
-public class APITest {
+public class Main {
 
 
     public static void main(String[] args) throws InterruptedException {

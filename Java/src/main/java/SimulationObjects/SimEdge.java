@@ -6,7 +6,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
+/**
+ * Object corresponding to Traci.Edge. Keeps track of average Cars and speed
+ */
 public class SimEdge extends SimObject {
 
     private Set<Integer> averageCarsSet=new HashSet<>();
@@ -28,7 +30,7 @@ public class SimEdge extends SimObject {
         return wrapper.get_EdgeLastStepAverageSpeed(id);
     }
 
-//TODO look into performance this took a big hit
+
     public void update(){
         averageCarsSet.add(getLastStepCars());
         averageSpeedSet.add(getLastStepSpeed());

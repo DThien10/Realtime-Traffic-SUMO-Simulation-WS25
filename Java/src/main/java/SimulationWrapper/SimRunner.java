@@ -15,6 +15,9 @@ import GUI.MapPanel;
 import SimulationObjects.SimEdge;
 import SimulationObjects.SimTrafficlight;
 import SimulationObjects.SimVehicle;
+/**
+ * Handles the running of sumo and passes data between classes
+ */
 
 public class SimRunner {
 
@@ -132,7 +135,7 @@ public class SimRunner {
 
         boolean ok = wrapper.add_Vehicle(id, routeId);
         if (!ok) return false;
-
+        //not functional
         // set speed (optional)
        // if (!Double.isNaN(speed)) wrapper.set_VehicleSpeed(id, speed);
 
@@ -140,7 +143,7 @@ public class SimRunner {
         if (color != null) wrapper.set_VehicleColor(id, color);
 
         data.UpdateAdded_Vehicles(id);
-       // data.registerVehicle(id); // để vehicle xuất hiện ngay trong list/snapshot
+
         return true;
     }
 
@@ -157,7 +160,7 @@ public class SimRunner {
         }
         return added;
     }
-
+//adds count amount of Vehicles on the Route with routeID
     public int addVehiclesOnRouteBatch(String routeId, int count, double speed, java.awt.Color color) {
         int added = 0;
         for (int i = 0; i < count; i++) {

@@ -207,7 +207,7 @@ public class CustomGUI extends JFrame {
             }
 
 
-            controller.quit();
+
             appendLog("Simulation stopped");
             Set<String> custom_cars_list = controller.get_addedVehicles();
 
@@ -215,6 +215,7 @@ public class CustomGUI extends JFrame {
 
 
             appendLog("Amount of cars added throughout the simulation: "+custom_cars_list.size());
+            controller.quit();
         });
 
         panel.add(pauseBtn);

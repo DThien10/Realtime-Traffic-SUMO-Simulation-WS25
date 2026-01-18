@@ -17,7 +17,9 @@ import SimulationObjects.SimVehicle;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
-
+/**
+ * Handles stores and passes data to every class that needs it
+ */
 public class SimData {
     private final SumoWrapper wrapper;
 
@@ -147,10 +149,6 @@ public class SimData {
 
     }
 
-    public void registerVehicle(String id) {
-       // vehicles.computeIfAbsent(id, k -> new SimulationObjects.SimVehicle(k, wrapper));
-       // vehicles.get(id).update(); // lấy position/speed ngay
-    }
 
     public void buildRoutesByStartEdge() {
         routesByStartEdge.clear();

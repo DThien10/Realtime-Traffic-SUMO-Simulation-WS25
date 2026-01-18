@@ -9,13 +9,16 @@ import java.util.Scanner;
 import java.util.logging.Logger;
 
 import org.eclipse.sumo.libtraci.*;
-
+/**
+ * Control center for all communication between the program and sumo
+ */
 public class SumoWrapper {
     private final static Logger WrapperLogger = Logger.getLogger(SumoWrapper.class.getName());
     private Process sumoProcess;
     private final int port=48042;
     private String TrafficLightState="DEFAULT";
     private final String configPath;
+
 
 
     public SumoWrapper(String configPath) {
@@ -248,10 +251,6 @@ public class SumoWrapper {
         org.eclipse.sumo.libtraci.Vehicle.setRouteID(vehicleId, routeId);
     }
 
-    // optional: set route by edges list (depends on binding)
-    //public void setVehicleRouteEdges(String vehicleId, List<String> edges) {
-    //    org.eclipse.sumo.libtraci.Vehicle.setRoute(vehicleId, edges);
-    //}
 
     public List<String> get_customRouteIDList() {
         List<String> all_Routes = get_RouteIDList();
