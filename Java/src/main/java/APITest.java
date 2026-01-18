@@ -5,20 +5,31 @@ import GUI.CustomGUI;
 import GUI.MapPanel;
 import SimulationWrapper.SimRunner;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.Logger;
+
 
 //basic connection showcase of sumo using libtraci
 public class APITest {
 
 
     public static void main(String[] args) throws InterruptedException {
-   
+
 
         //sets path to sumo files according to user directory
         String base = System.getProperty("user.dir");
 
-        String configPath = "C:\\Users\\Marko\\Documents\\GitHub\\Realtime-Traffic-SUMO-Simulation-WS25\\Java\\src\\main\\resources\\SumoConfig/altstadt.sumocfg";
-        String netPath  = "C:\\Users\\Marko\\Documents\\GitHub\\Realtime-Traffic-SUMO-Simulation-WS25\\Java\\src\\main\\resources\\SumoConfig/altstadt.net.xml";
+        String configPath;
+        String netPath;
+        try {
+            configPath = FileFinder.findMyFile("altstadt.sumocfg").toString();
+            netPath = FileFinder.findMyFile("altstadt.net.xml").toString();
 
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        
         MapPanel mapPanel = new MapPanel();
         JFrame frame = new JFrame("SUMO Realtime Map"); // create a frame(window) to hold the map panel
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // application is closed when the frame is closed
