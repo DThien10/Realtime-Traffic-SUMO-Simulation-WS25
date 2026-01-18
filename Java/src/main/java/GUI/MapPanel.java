@@ -194,7 +194,7 @@ public class MapPanel extends JPanel {
 
             if (v.isUserGenerated()) {
                 int r = (int)Math.max(1, Math.round(3 * s)); // ~6px
-                g2.setColor(Color.YELLOW);
+                g2.setColor(v.getColor());
                 g2.fillOval((int)p.getX() - r, (int)p.getY() - r, 2*r, 2*r);
             } else {
                 int r = (int)Math.max(1, Math.round(2 * s)); // ~4px

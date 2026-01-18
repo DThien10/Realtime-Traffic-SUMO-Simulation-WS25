@@ -8,17 +8,7 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.logging.Logger;
 
-import org.eclipse.sumo.libtraci.Edge;
-import org.eclipse.sumo.libtraci.IntStringPair;
-import org.eclipse.sumo.libtraci.Lane;
-import org.eclipse.sumo.libtraci.Route;
-import org.eclipse.sumo.libtraci.Simulation;
-import org.eclipse.sumo.libtraci.TraCIColor;
-import org.eclipse.sumo.libtraci.TraCILogic;
-import org.eclipse.sumo.libtraci.TraCILogicVector;
-import org.eclipse.sumo.libtraci.TraCIPosition;
-import org.eclipse.sumo.libtraci.TrafficLight;
-import org.eclipse.sumo.libtraci.Vehicle;
+import org.eclipse.sumo.libtraci.*;
 
 public class SumoWrapper {
     private final static Logger WrapperLogger = Logger.getLogger(SumoWrapper.class.getName());
@@ -51,17 +41,17 @@ public class SumoWrapper {
         System.out.println("TraCI native libs loaded");
 
 
-    try{
-        ProcessBuilder pb = new ProcessBuilder(openguiYN(),
-                "-c", configPath,
-                "--remote-port", String.valueOf(port)
-        );
-        pb.inheritIO();
-        sumoProcess= pb.start();}
-    catch (IOException e){
-        System.err.println("Failed to start SUMO: " + e.getMessage());
-        e.printStackTrace();
-    }
+        try{
+            ProcessBuilder pb = new ProcessBuilder(openguiYN(),
+                    "-c", configPath,
+                    "--remote-port", String.valueOf(port)
+            );
+            pb.inheritIO();
+            sumoProcess= pb.start();}
+        catch (IOException e){
+            System.err.println("Failed to start SUMO: " + e.getMessage());
+            e.printStackTrace();
+        }
 
         IntStringPair connection;
         for(int i=0; i<10; i++) {
@@ -117,7 +107,7 @@ public class SumoWrapper {
 
     public void step(){
 
-            Simulation.step();
+        Simulation.step();
 
     }
 
@@ -128,7 +118,7 @@ public class SumoWrapper {
     public List<String> getVehicleIDs (){
         return new ArrayList<>(Vehicle.getIDList());
     }
-    public boolean VehicleExists(String CarID){
+    public boolean vehicleExists(String CarID){
         return Vehicle.getIDList().contains(CarID);
     }
     public int get_VehicleCount () {
@@ -154,7 +144,7 @@ public class SumoWrapper {
 
     }
     public void remove_Vehicle(String CarID){
-        if(VehicleExists(CarID)){
+        if(vehicleExists(CarID)){
             Vehicle.remove(CarID);}
         else WrapperLogger.warning("Vehicle with the ID: "+ CarID+" does not exist");
 
@@ -163,8 +153,11 @@ public class SumoWrapper {
     public TraCIColor get_Vehiclecolor(String id){
         return Vehicle.getColor(id);
     }
-    public double get_VehicleSpeed(String CarID) {
-        return Vehicle.getSpeed(CarID);
+    public double get_VehicleSpeed(String carID) {
+        if(vehicleExists(carID)){
+            return Vehicle.getSpeed(carID);
+        }
+        throw new SimObjectException("Vehicle " + carID + " does not exist");
     }
     public void set_VehicleSpeed(String CarID,double speed){
         Vehicle.setSpeed(CarID,speed);
@@ -221,6 +214,11 @@ public class SumoWrapper {
     public List<String> get_EdgeIDList(){
         return new ArrayList<>(Edge.getIDList());
     }
+
+    public List<String> getRouteEdges(String routeId) {
+        return new ArrayList<>(org.eclipse.sumo.libtraci.Route.getEdges(routeId));
+    }
+
     public String get_EdgeStreetname(String id){
         return Edge.getStreetName(id);
     }
@@ -240,6 +238,21 @@ public class SumoWrapper {
         return Lane.getIDList().contains(LaneID);
     }
 
+    public void set_VehicleColor(String vehicleId, java.awt.Color c) {
+        org.eclipse.sumo.libtraci.TraCIColor tc =
+                new org.eclipse.sumo.libtraci.TraCIColor(c.getRed(), c.getGreen(), c.getBlue(), 255);
+        org.eclipse.sumo.libtraci.Vehicle.setColor(vehicleId, tc);
+    }
+
+    public void setVehicleRouteId(String vehicleId, String routeId) {
+        org.eclipse.sumo.libtraci.Vehicle.setRouteID(vehicleId, routeId);
+    }
+
+    // optional: set route by edges list (depends on binding)
+    //public void setVehicleRouteEdges(String vehicleId, List<String> edges) {
+    //    org.eclipse.sumo.libtraci.Vehicle.setRoute(vehicleId, edges);
+    //}
+
     public List<String> get_customRouteIDList() {
         List<String> all_Routes = get_RouteIDList();
         List<String> custom_Routes = new ArrayList<>();
@@ -257,24 +270,24 @@ public class SumoWrapper {
 
     // đéo thể hiểu gì được
     public Map<String, Character> getLaneSignalMap(String tlId) {
-    Map<String, Character> laneSig = new HashMap<>();
+        Map<String, Character> laneSig = new HashMap<>();
 
-    String state = TrafficLight.getRedYellowGreenState(tlId);
-    if (state == null || state.isEmpty()) return laneSig;
+        String state = TrafficLight.getRedYellowGreenState(tlId);
+        if (state == null || state.isEmpty()) return laneSig;
 
-    List<String> lanes = TrafficLight.getControlledLanes(tlId);
-    if (lanes == null || lanes.isEmpty()) return laneSig;
+        List<String> lanes = TrafficLight.getControlledLanes(tlId);
+        if (lanes == null || lanes.isEmpty()) return laneSig;
 
-    int n = Math.min(state.length(), lanes.size());
-    for (int i = 0; i < n; i++) {
-        String laneId = lanes.get(i);
-        if (laneId == null || laneId.isEmpty()) continue;
+        int n = Math.min(state.length(), lanes.size());
+        for (int i = 0; i < n; i++) {
+            String laneId = lanes.get(i);
+            if (laneId == null || laneId.isEmpty()) continue;
 
-        char sig = state.charAt(i);
-        laneSig.put(laneId, mergeMostPermissive(laneSig.get(laneId), sig));
+            char sig = state.charAt(i);
+            laneSig.put(laneId, mergeMostPermissive(laneSig.get(laneId), sig));
+        }
+        return laneSig;
     }
-    return laneSig;
-}
 
 
 
@@ -289,6 +302,20 @@ public class SumoWrapper {
         if (c == 'y') return 2;
         if (c == 'r') return 1;
         return 0;
+    }
+
+    // TEST TRAFFIC LIGHT
+    public Position get_TrafficLightPosition(String trafficLightId) {
+        TraCIPosition p = Junction.getPosition(trafficLightId);
+        return new Position(p.getX(), p.getY());
+        // TEST TRAFFIC LIGHT
+    }
+    public void setTrafficLightPhase(String tlsId, int phaseIndex) {
+        org.eclipse.sumo.libtraci.TrafficLight.setPhase(tlsId, phaseIndex);
+    }
+
+    public void setTrafficLightPhaseDuration(String tlsId, double seconds) {
+        org.eclipse.sumo.libtraci.TrafficLight.setPhaseDuration(tlsId, seconds);
     }
 
     // đéo thể hiểu gì được

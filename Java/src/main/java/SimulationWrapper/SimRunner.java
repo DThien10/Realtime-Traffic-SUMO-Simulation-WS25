@@ -2,15 +2,19 @@ package SimulationWrapper;
 
 import java.awt.*;
 import java.text.DecimalFormat;
-import java.util.*;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import Filters.VehicleFilter;
-import org.eclipse.sumo.libtraci.Simulation;
 
 import GUI.MapPanel;
+import SimulationObjects.SimEdge;
 import SimulationObjects.SimTrafficlight;
+import SimulationObjects.SimVehicle;
 
 public class SimRunner {
 
@@ -35,24 +39,26 @@ public class SimRunner {
     private volatile int stepDelayMs=0;
 
     private volatile boolean pause = false;
+    private boolean running;
+
+    private RenderSnapshot currentSnapshot;
 
 
 
 
-    public SimRunner(String configPath,String netPath,MapPanel mapPanel){
-        this.mapPanel=mapPanel;
+    public SimRunner(String configPath,String netPath){
+        mapPanel=new MapPanel();
         this.configPath=configPath;
         this.netPath=netPath;
         wrapper=new SumoWrapper(configPath);
         data=new SimData(wrapper);
     }
-//TODO add gui initialization to start() instead of main method
+    //TODO add gui initialization to start() instead of main method
     public void start() throws InterruptedException {
+        wrapper.start();
 
-        wrapper.start(); // khởi động SUMO và kết nối TraCI
-
-        data.initiate(netPath); // load network (edges/ lanes shapes)
-        mapPanel.setEdges(data.getEdgesSet()); //đưa edges sáng GUI vẽ bản đồ
+        data.initiate(netPath);
+        mapPanel.setEdges(data.getEdgesSet());
 
     }
     //pauses the simulation run
@@ -64,11 +70,10 @@ public class SimRunner {
         pause=false;
     }
 
-    public void run(int steps) {
+    public void run() {
+        running=true;
 
-
-
-        for (int i = 0; i < steps; i++) {
+        while (running) {
             while(pause){
                 try{
                     Thread.sleep(100);
@@ -81,9 +86,6 @@ public class SimRunner {
 
             data.update();
             updateMap();
-
-
-
 
 /*
             //Edge average test
@@ -106,7 +108,7 @@ public class SimRunner {
         Set<String> custom_cars_list = data.get_addedVehicles();
         System.out.println("List of added Cars throughout the simulation: "+custom_cars_list);
         SimRunLogger.info("Added "+data.get_addedVehicles().size()+" Vehicles throughout the whole Simulation");
-
+        
 
         wrapper.quit();
     }
@@ -121,27 +123,71 @@ public class SimRunner {
         int addition_counter=0;
 
         for (int i = 0; i < amount_to_add; i++) {
-            newID = "Random_add" + (int) Simulation.getTime()+"_" + i;
+            newID = "Random_add_" + System.nanoTime(); // unique ID based on time
             random = random_number.nextInt(0, all_route_length);
             random_route = all_routes.get(random);
 
             if(wrapper.add_Vehicle(newID, random_route)){
                 data.UpdateAdded_Vehicles(newID);
+              //  data.registerVehicle(newID);
                 addition_counter++;
             }
         }
         SimRunLogger.info("Injected "+addition_counter+" Vehicles randomly to the Simulation");
     }
+
+
+    public boolean addVehicleWithParams(String routeId, double speed, java.awt.Color color) {
+        String id = "GUI_" + (int) wrapper.getTime() + "_" + System.nanoTime();
+
+        boolean ok = wrapper.add_Vehicle(id, routeId);
+        if (!ok) return false;
+
+        // set speed (optional)
+       // if (!Double.isNaN(speed)) wrapper.set_VehicleSpeed(id, speed);
+
+        // set color (optional)
+        if (color != null) wrapper.set_VehicleColor(id, color);
+
+        data.UpdateAdded_Vehicles(id);
+       // data.registerVehicle(id); // để vehicle xuất hiện ngay trong list/snapshot
+        return true;
+    }
+
+    public int addVehiclesOnStartEdgeBatch(String startEdgeId, int count, double speed, java.awt.Color color) {
+        List<String> routes = getRoutesForStartEdge(startEdgeId);
+        if (routes.isEmpty()) return 0;
+
+        int added = 0;
+        // đơn giản: cứ dùng route đầu tiên (hoặc random nếu bạn muốn)
+        String routeId = routes.get(0);
+
+        for (int i = 0; i < count; i++) {
+            if (addVehicleWithParams(routeId, speed, color)) added++;
+        }
+        return added;
+    }
+
+    public int addVehiclesOnRouteBatch(String routeId, int count, double speed, java.awt.Color color) {
+        int added = 0;
+        for (int i = 0; i < count; i++) {
+            if (addVehicleWithParams(routeId, speed, color)) added++;
+        }
+        return added;
+    }
+
+
     public MapPanel getMapPanel() {
         return mapPanel;
     }
     private void updateMap() {
         if (mapPanel != null) {
-            mapPanel.updateFromSimulation(data.getSimulationSnapshot());
+            currentSnapshot=data.getSimulationSnapshot();
+            mapPanel.updateFromSimulation(currentSnapshot);
         }
     }
     public void quit(){
-        wrapper.quit();
+        running=false;
     }
     public void setStepDelayMs(int ms) {
         this.stepDelayMs = ms;
@@ -193,6 +239,54 @@ public class SimRunner {
         };
     }
 
+    public boolean addVehicleOnEdge(String edgeId, String routeId, double speed, java.awt.Color color) {
+        String id = "GUI_" + (int) org.eclipse.sumo.libtraci.Simulation.getTime() + "_" + System.nanoTime();
+
+        boolean ok = wrapper.add_Vehicle(id, routeId);
+        if (!ok) return false;
+
+        // Optional: force speed
+        if (!Double.isNaN(speed)) wrapper.set_VehicleSpeed(id, speed);
+
+        // Optional: set color (needs wrapper method, see section B)
+        // if (color != null) wrapper.set_VehicleColor(id, color);
+
+        data.UpdateAdded_Vehicles(id);
+        return true;
+    }
+    public int addVehiclesOnEdgeBatch(String edgeId, String routeId, int count, double speed, java.awt.Color color) {
+        int added = 0;
+        for (int i = 0; i < count; i++) {
+            if (addVehicleOnEdge(edgeId, routeId, speed, color)) added++;
+        }
+        return added;
+    }
+    public void setVehicleSpeed(String id, double speed) { wrapper.set_VehicleSpeed(id, speed); }
+    //public void setVehicleColor(String id, Color c) { wrapper.set_VehicleColor(id, c); }
+    public void setVehicleRoute(String id, String routeId) { wrapper.setVehicleRouteId(id, routeId); }
+    public List<String> getTrafficLightIds() { return wrapper.get_Trafficlightids(); }
+
+    public int getTlsPhase(String tlsId) { return wrapper.get_TrafficlightPhase(tlsId); }
+    public double getTlsRemaining(String tlsId) { return wrapper.get_Trafficlight_remaining_phaseduration(tlsId); }
+    public String getTlsState(String tlsId) { return wrapper.get_Trafficstate(tlsId); }
+
+    public void setTlsPhase(String tlsId, int phase) { wrapper.setTrafficLightPhase(tlsId, phase); }
+    public void setTlsPhaseDuration(String tlsId, double seconds) { wrapper.setTrafficLightPhaseDuration(tlsId, seconds); }
+
+    public Collection<SimVehicle> getVehiclesSnapshot() { return currentSnapshot.vehicles();    }
+    public Collection<SimTrafficlight> getTrafficLightsSnapshot() { return currentSnapshot.trafficLights(); }
+    public Collection<SimEdge> getEdgesSnapshot() {  return currentSnapshot.edges();    }
+
+    public List<String> getRoutesForStartEdge(String edgeId) {
+        Map<String, List<String>> m = data.getRoutesByStartEdge();
+        List<String> routes = m.get(edgeId);
+        return (routes == null) ? java.util.List.of() : java.util.List.copyOf(routes);
+    }
+
+    public java.util.List<String> getAllCustomRoutes() {
+        return java.util.List.copyOf(data.get_customRoutes());
+    }
+
     public void setVehicleFilterForRenderingMinimum(double minSpeed){
         vehicleFilterForRendering.setMinSpeed(minSpeed);
         mapPanel.setVehicleFilterForRendering(vehicleFilterForRendering);
@@ -222,6 +316,17 @@ public class SimRunner {
         vehicleFilterForRendering.setCheckForColor(checkForColors);
         mapPanel.setVehicleFilterForRendering(vehicleFilterForRendering);
     }
+
     //TODO make a clear() function to delete all current cars in the simulation
     //TODO be able to restart simulation
+    public void refreshVehiclesNow() {
+        synchronized (wrapper) {
+            data.update_Vehicles();
+        }
+        updateMap(); // cái này nên invokeLater trong updateMap như tôi đã nhắc trước đó
+    }
+
+    public Set<String> get_addedVehicles() {
+        return data.get_addedVehicles();
+    }
 }

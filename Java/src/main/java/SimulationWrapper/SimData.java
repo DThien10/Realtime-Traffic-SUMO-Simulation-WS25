@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import SimulationObjects.SimEdge;
@@ -30,6 +31,10 @@ public class SimData {
     private List<String> custom_Routes;
     private final Set<SimTrafficlight> trafficlights = new HashSet<>();
     private Set<SimEdge> edges;
+    private final Map<String, List<String>> routesByStartEdge = new HashMap<>();
+
+    private final static Logger simDataLogger = Logger.getLogger(SimData.class.getName());
+
 
 
     //getter/setter/updater methods
@@ -62,7 +67,7 @@ public class SimData {
     }
 
     public RenderSnapshot getSimulationSnapshot() {
-        return new RenderSnapshot(new HashSet<>(vehicles.values()), trafficlights);
+        return new RenderSnapshot(new HashSet<>(vehicles.values()), trafficlights,edges);
     }
 
     public void initiateEdges(String netPath) {
@@ -97,7 +102,11 @@ public class SimData {
         vehicles.keySet().removeIf(id -> !currentIDs.contains(id));
 
         for (SimVehicle v : vehicles.values()) {
-            v.update();
+            try {
+                v.update();
+            }catch(SimObjectException e){
+                simDataLogger.warning(e.getMessage());
+            }
         }
     }
 
@@ -119,7 +128,7 @@ public class SimData {
         setCustom_Routes();
         initiate_trafficlights();
         initiateEdges(netPath);
-
+        buildRoutesByStartEdge();
     }
 
     public Collection<SimVehicle> get_SimVehicles() {
@@ -138,9 +147,31 @@ public class SimData {
 
     }
 
+    public void registerVehicle(String id) {
+       // vehicles.computeIfAbsent(id, k -> new SimulationObjects.SimVehicle(k, wrapper));
+       // vehicles.get(id).update(); // lấy position/speed ngay
+    }
+
+    public void buildRoutesByStartEdge() {
+        routesByStartEdge.clear();
+        if (custom_Routes == null) return;
+
+        for (String routeId : custom_Routes) {
+            List<String> edgesInRoute = wrapper.getRouteEdges(routeId);
+            if (!edgesInRoute.isEmpty()) {
+                String startEdge = edgesInRoute.get(0);
+                routesByStartEdge.computeIfAbsent(startEdge, k -> new java.util.ArrayList<>()).add(routeId);
+            }
+        }
+    }
+
+    public Map<String, List<String>> getRoutesByStartEdge() {
+        return Collections.unmodifiableMap(routesByStartEdge);
+    }
 
 
-//TODO start working on filtering methods
+
+
 
 }
 

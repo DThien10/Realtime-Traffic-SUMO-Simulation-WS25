@@ -30,6 +30,7 @@ public class SimTrafficlight extends SimObject{
         state = wrapper.get_Trafficstate(id);
 
         // TEST TRAFFIC LIGHT
+
         phase = wrapper.get_TrafficlightPhase(id);
         phaseDuration = wrapper.get_Trafficlight_phaseduration(id);
         remainingPhaseDuration = wrapper.get_Trafficlight_remaining_phaseduration(id);
@@ -93,6 +94,19 @@ public class SimTrafficlight extends SimObject{
         update();
         System.out.println(id + " back to program=" + originalProgramm
         + " phase=" + phase + " state=" + state);
+    }
+
+    public String toDisplayString() {
+        String s = getState();
+        int phase = getPhase();
+        double rem = get_remaining_phaseduration();
+
+        // quick “dominant” color label
+        String colorLabel = "RED";
+        if (s != null && (s.contains("G") || s.contains("g"))) colorLabel = "GREEN";
+        else if (s != null && (s.contains("y") || s.contains("Y"))) colorLabel = "YELLOW";
+
+        return String.format("%s | %s | phase=%d | rem=%.1fs", id, colorLabel, phase, rem);
     }
     // TEST TRAFFIC LIGHT
 }

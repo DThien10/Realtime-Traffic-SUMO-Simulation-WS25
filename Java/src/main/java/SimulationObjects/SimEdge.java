@@ -67,4 +67,29 @@ public class SimEdge extends SimObject {
     public void addLane(SimLane lane){
         lanes.add(lane);
     }
+
+    public String getStreetName() {
+        try {
+            String n = wrapper.get_EdgeStreetname(id);
+            return (n == null || n.isBlank()) ? null : n;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public String toDisplayString() {
+        int cars = getLastStepCars();
+        double speed = getLastStepSpeed();
+
+        String name = getStreetName();
+        String title = (name != null) ? name : "Edge";
+
+        // congestion rule (tùy bạn chỉnh)
+        boolean congested = cars >= 10 && speed <= 2.0;
+
+        return String.format(
+                "%s | id=%s | cars=%d | v=%.1f m/s%s",
+                title, id, cars, speed, congested ? " | CONGESTED" : ""
+        );
+    }
 }

@@ -1,13 +1,9 @@
-import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 import GUI.CustomGUI;
-import GUI.MapPanel;
 import SimulationWrapper.SimRunner;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.logging.Logger;
 
 
 //basic connection showcase of sumo using libtraci
@@ -29,25 +25,18 @@ public class APITest {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        
-        MapPanel mapPanel = new MapPanel();
-        JFrame frame = new JFrame("SUMO Realtime Map"); // create a frame(window) to hold the map panel
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // application is closed when the frame is closed
-        frame.add(mapPanel);
 
-        frame.pack(); // adjust frame size to fit the preferred size of components inside it
-        frame.setLocationRelativeTo(null); // center the frame on the screen
-        frame.setVisible(true); // make the frame visible
+
 
         // Controller for Simulation and Map
-        SimRunner controller = new SimRunner(configPath, netPath, mapPanel);
+        SimRunner controller = new SimRunner(configPath, netPath);
 
         // Start SUMO simulation
         controller.start();
         // Launch customGUI with controls
         SwingUtilities.invokeLater(() -> new CustomGUI(controller));
         // Continue running steps in a separate thread
-        new Thread(() -> controller.run(10000)).start();
+        new Thread(() -> controller.run()).start();
 
 
 
